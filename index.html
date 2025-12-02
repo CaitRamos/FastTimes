@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fast Times PDX Sales Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .metric-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .metric-label {
+            font-size: 0.9em;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+        
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .metric-subtext {
+            font-size: 0.85em;
+            color: #999;
+            margin-top: 5px;
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .chart-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .chart-card h2 {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        
+        .tall-chart {
+            height: 400px;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .status-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .metric-value {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="header">
+            <h1>🍕 Fast Times PDX Sales Dashboard</h1>
+            <p>October 10 - December 1, 2025</p>
+        </div>
+        
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">Total Net Sales</div>
+                <div class="metric-value">$82,212.92</div>
+                <div class="metric-subtext">53 days of operation</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-label">Total Orders</div>
+                <div class="metric-value">7,003</div>
+                <div class="metric-subtext">132 orders/day avg</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-label">Average Order Value</div>
+                <div class="metric-value">$11.74</div>
+                <div class="metric-subtext">Per guest transaction</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-label">Tips Collected</div>
+                <div class="metric-value">$10,188.20</div>
+                <div class="metric-subtext">12.4% of net sales</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-label">Cash Shortage</div>
+                <div class="metric-value" style="color: #dc3545;">-$1,554.00</div>
+                <div class="metric-subtext">Needs attention</div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-label">Total Revenue</div>
+                <div class="metric-value">$92,411.85</div>
+                <div class="metric-subtext">Including tips & tax</div>
+            </div>
+        </div>
+        
+        <div class="charts-grid">
+            <div class="chart-card full-width">
+                <h2>Daily Sales Trend</h2>
+                <div class="chart-container tall-chart">
+                    <canvas id="salesTrendChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <h2>Sales by Day of Week</h2>
+                <div class="chart-container">
+                    <canvas id="dayOfWeekChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <h2>Sales by Service Period</h2>
+                <div class="chart-container">
+                    <canvas id="servicePeriodChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-card full-width">
+                <h2>Hourly Sales Distribution</h2>
+                <div class="chart-container">
+                    <canvas id="hourlyChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-card full-width">
+                <h2>Service Period Performance Details</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Service Period</th>
+                                <th>Orders</th>
+                                <th>Net Sales</th>
+                                <th>Avg Order Value</th>
+                                <th>Discount Amount</th>
+                                <th>Refund Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Dinner</strong></td>
+                                <td>2,264</td>
+                                <td>$28,544.74</td>
+                                <td>$12.61</td>
+                                <td>$879.55</td>
+                                <td>$0.00</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Late Night</strong></td>
+                                <td>3,187</td>
+                                <td>$37,390.19</td>
+                                <td>$11.73</td>
+                                <td>$720.60</td>
+                                <td>$0.00</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Lunch</strong></td>
+                                <td>1,541</td>
+                                <td>$16,172.99</td>
+                                <td>$10.49</td>
+                                <td>$961.00</td>
+                                <td>$98.00</td>
+                            </tr>
+                            <tr>
+                                <td><strong>No Service</strong></td>
+                                <td>11</td>
+                                <td>$105.00</td>
+                                <td>$9.55</td>
+                                <td>$4.00</td>
+                                <td>$0.00</td>
+                            </tr>
+                            <tr style="background: #f8f9fa; font-weight: bold;">
+                                <td>TOTAL</td>
+                                <td>7,003</td>
+                                <td>$82,212.92</td>
+                                <td>$11.74</td>
+                                <td>$2,565.15</td>
+                                <td>$98.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Chart.js default settings
+        Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+        Chart.defaults.color = '#666';
+        
+        // Color palette
+        const colors = {
+            primary: '#667eea',
+            secondary: '#764ba2',
+            success: '#48bb78',
+            warning: '#f6ad55',
+            danger: '#fc8181',
+            info: '#4299e1'
+        };
+        
+        // Sales Trend Chart
+        const salesData = [
+            {date: '2025-10-10', sales: 1022.5},
+            {date: '2025-10-11', sales: 740.5},
+            {date: '2025-10-15', sales: 391.5},
+            {date: '2025-10-16', sales: 1383.95},
+            {date: '2025-10-17', sales: 1787.04},
+            {date: '2025-10-18', sales: 2350.0},
+            {date: '2025-10-19', sales: 733.0},
+            {date: '2025-10-20', sales: 849.04},
+            {date: '2025-10-21', sales: 846.0},
+            {date: '2025-10-22', sales: 832.0},
+            {date: '2025-10-23', sales: 1107.58},
+            {date: '2025-10-24', sales: 2193.11},
+            {date: '2025-10-25', sales: 1752.0},
+            {date: '2025-10-26', sales: 931.25},
+            {date: '2025-10-27', sales: 816.5},
+            {date: '2025-10-28', sales: 821.0},
+            {date: '2025-10-29', sales: 1196.58},
+            {date: '2025-10-30', sales: 1169.0},
+            {date: '2025-10-31', sales: 3371.17},
+            {date: '2025-11-01', sales: 2105.41},
+            {date: '2025-11-02', sales: 1034.54},
+            {date: '2025-11-03', sales: 950.49},
+            {date: '2025-11-04', sales: 870.75},
+            {date: '2025-11-05', sales: 888.58},
+            {date: '2025-11-06', sales: 1201.29},
+            {date: '2025-11-07', sales: 3329.08},
+            {date: '2025-11-08', sales: 2120.03},
+            {date: '2025-11-09', sales: 1163.66},
+            {date: '2025-11-10', sales: 1293.69},
+            {date: '2025-11-11', sales: 1323.0},
+            {date: '2025-11-12', sales: 1240.4},
+            {date: '2025-11-13', sales: 1571.79},
+            {date: '2025-11-14', sales: 2805.08},
+            {date: '2025-11-15', sales: 3481.87},
+            {date: '2025-11-16', sales: 1424.20},
+            {date: '2025-11-17', sales: 1462.87},
+            {date: '2025-11-18', sales: 1638.11},
+            {date: '2025-11-19', sales: 2182.97},
+            {date: '2025-11-20', sales: 1970.68},
+            {date: '2025-11-21', sales: 2831.20},
+            {date: '2025-11-22', sales: 2653.50},
+            {date: '2025-11-23', sales: 1307.88},
+            {date: '2025-11-24', sales: 1531.04},
+            {date: '2025-11-25', sales: 1196.50},
+            {date: '2025-11-26', sales: 2850.06},
+            {date: '2025-11-27', sales: 2975.36},
+            {date: '2025-11-28', sales: 2324.55},
+            {date: '2025-11-29', sales: 2983.50},
+            {date: '2025-11-30', sales: 1702.20},
+            {date: '2025-12-01', sales: 1504.92}
+        ];
+        
+        new Chart(document.getElementById('salesTrendChart'), {
+            type: 'line',
+            data: {
+                labels: salesData.map(d => {
+                    const date = new Date(d.date);
+                    return date.toLocaleDateString('en-US', {month: 'short', day: 'numeric'});
+                }),
+                datasets: [{
+                    label: 'Daily Sales',
+                    data: salesData.map(d => d.sales),
+                    borderColor: colors.primary,
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return '$' + context.parsed.y.toFixed(2);
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Day of Week Chart
+        new Chart(document.getElementById('dayOfWeekChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+                datasets: [{
+                    label: 'Sales by Day',
+                    data: [8408.55, 6695.36, 9582.09, 11379.65, 19663.73, 18186.81, 8296.73],
+                    backgroundColor: [
+                        colors.primary,
+                        colors.secondary,
+                        colors.info,
+                        colors.success,
+                        colors.warning,
+                        colors.danger,
+                        colors.primary
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return '$' + context.parsed.y.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + (value/1000).toFixed(0) + 'k';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Service Period Chart
+        new Chart(document.getElementById('servicePeriodChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Late Night', 'Dinner', 'Lunch', 'No Service'],
+                datasets: [{
+                    data: [37390.19, 28544.74, 16172.99, 105.0],
+                    backgroundColor: [
+                        colors.primary,
+                        colors.secondary,
+                        colors.success,
+                        colors.warning
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.parsed;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                return context.label + ': $' + value.toLocaleString() + ' (' + percentage + '%)';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Hourly Chart
+        const hourlyData = [
+            {hour: '10 AM', sales: 105.0},
+            {hour: '11 AM', sales: 2939.79},
+            {hour: '12 PM', sales: 4535.49},
+            {hour: '1 PM', sales: 3093.26},
+            {hour: '2 PM', sales: 2511.72},
+            {hour: '3 PM', sales: 3092.73},
+            {hour: '4 PM', sales: 4793.34},
+            {hour: '5 PM', sales: 6070.13},
+            {hour: '6 PM', sales: 6524.99},
+            {hour: '7 PM', sales: 5399.21},
+            {hour: '8 PM', sales: 5757.07},
+            {hour: '9 PM', sales: 6997.47},
+            {hour: '10 PM', sales: 6745.44},
+            {hour: '11 PM', sales: 7023.51},
+            {hour: '12 AM', sales: 7713.36},
+            {hour: '1 AM', sales: 5455.46},
+            {hour: '2 AM', sales: 3014.45},
+            {hour: '3 AM', sales: 440.5}
+        ];
+        
+        new Chart(document.getElementById('hourlyChart'), {
+            type: 'bar',
+            data: {
+                labels: hourlyData.map(d => d.hour),
+                datasets: [{
+                    label: 'Hourly Sales',
+                    data: hourlyData.map(d => d.sales),
+                    backgroundColor: colors.primary,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return '$' + context.parsed.y.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + (value/1000).toFixed(0) + 'k';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
