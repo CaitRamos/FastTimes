@@ -1,0 +1,3045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fast Times PDX - Financial Turnaround Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a1d29;
+            --secondary: #252936;
+            --accent: #ff4757;
+            --accent-soft: rgba(255, 71, 87, 0.1);
+            --success: #2ed573;
+            --success-soft: rgba(46, 213, 115, 0.1);
+            --warning: #ffa502;
+            --warning-soft: rgba(255, 165, 2, 0.1);
+            --text: #e8eaed;
+            --text-dim: #9aa0a6;
+            --border: #3c4043;
+            --bg-elevated: #2d3139;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'IBM Plex Sans', sans-serif;
+            background: var(--primary);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1a1d29 0%, #252936 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+        
+        .nav-tab {
+            padding: 0.75rem 1.5rem;
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            color: var(--text);
+        }
+        
+        .nav-tab:hover {
+            background: var(--bg-elevated);
+            border-color: var(--accent);
+        }
+        
+        .nav-tab.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+        
+        .content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .alert {
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border: 1px solid;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+        
+        .alert-critical {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+        }
+        
+        .alert-warning {
+            background: var(--warning-soft);
+            border-color: var(--warning);
+        }
+        
+        .alert-success {
+            background: var(--success-soft);
+            border-color: var(--success);
+        }
+        
+        .alert-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .metric-card {
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .metric-label {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            font-family: 'IBM Plex Mono', monospace;
+            margin-bottom: 0.25rem;
+        }
+        
+        .metric-detail {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+        
+        .metric-change {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+        
+        .metric-change.negative {
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+        
+        .metric-change.positive {
+            background: var(--success-soft);
+            color: var(--success);
+        }
+        
+        .section {
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+        }
+        
+        thead {
+            background: var(--bg-elevated);
+        }
+        
+        th {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-dim);
+            border-bottom: 2px solid var(--border);
+        }
+        
+        td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        tbody tr:hover {
+            background: var(--bg-elevated);
+        }
+        
+        .mono {
+            font-family: 'IBM Plex Mono', monospace;
+        }
+        
+        .text-right {
+            text-align: right;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .color-accent { color: var(--accent); }
+        .color-success { color: var(--success); }
+        .color-warning { color: var(--warning); }
+        .color-dim { color: var(--text-dim); }
+        
+        .bold { font-weight: 700; }
+        
+        .schedule-grid {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .schedule-day {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+        
+        .schedule-day-header {
+            font-weight: 700;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .shift-list {
+            display: grid;
+            gap: 0.5rem;
+        }
+        
+        .shift-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: var(--secondary);
+            border-radius: 6px;
+            border-left: 3px solid;
+        }
+        
+        .shift-kitchen { border-left-color: #3498db; }
+        .shift-foh { border-left-color: #9b59b6; }
+        .shift-lead { border-left-color: #e74c3c; }
+        .shift-prep { border-left-color: #27ae60; }
+        .shift-security { border-left-color: #f39c12; }
+        
+        .shift-time {
+            font-family: 'IBM Plex Mono', monospace;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+        
+        .comparison-table {
+            margin-bottom: 2rem;
+        }
+        
+        .highlight-row {
+            background: var(--accent-soft) !important;
+            font-weight: 600;
+        }
+        
+        .totals-row {
+            font-weight: 700;
+            background: var(--bg-elevated) !important;
+            border-top: 2px solid var(--border) !important;
+        }
+        
+        .assumption-item {
+            padding: 1rem;
+            background: var(--bg-elevated);
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+        
+        .assumption-label {
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 0.25rem;
+        }
+        
+        .methodology-box {
+            background: var(--bg-elevated);
+            border-left: 3px solid var(--accent);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+        }
+        
+        .key-insight {
+            background: var(--warning-soft);
+            border-left: 3px solid var(--warning);
+            padding: 1rem 1.5rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--secondary);
+            color: var(--text);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        
+        .btn:hover {
+            background: var(--bg-elevated);
+        }
+        
+        .btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+            
+        /* Badge styles for employee decisions */
+        .badge-keep {
+            background: #C6EFCE;
+            color: #006100;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+        
+        .badge-cut {
+            background: #FFC7CE;
+            color: #9C0006;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+        
+        .badge-maybe {
+            background: #FFEB9C;
+            color: #9C5700;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+        
+        /* Alert info style */
+        .alert-info {
+            background: linear-gradient(135deg, rgba(33, 150, 243, 0.1) 0%, rgba(33, 150, 243, 0.05) 100%);
+            border: 1px solid rgba(33, 150, 243, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1>Fast Times PDX - Financial Turnaround Analysis</h1>
+            <div class="subtitle">Comprehensive Labor & Operations Review | Dec 2025</div>
+            
+            <div class="nav-tabs">
+                <div class="nav-tab active" onclick="switchTab('current')">Current State Crisis</div>
+                <div class="nav-tab" onclick="switchTab('employees')">Employee Decisions</div>
+                <div class="nav-tab" onclick="switchTab('detailed-pl')">Detailed P&L</div>
+                <div class="nav-tab" onclick="switchTab('assumptions')">Data & Methodology</div>
+                <div class="nav-tab" onclick="switchTab('scenario1')">Scenario 1: Survival Mode</div>
+                <div class="nav-tab" onclick="switchTab('scenario2')">Scenario 2: Right-Sized</div>
+                <div class="nav-tab" onclick="switchTab('scenario3')">Scenario 3: Growth Path</div>
+                <div class="nav-tab" onclick="switchTab('comparison')">Scenario Comparison</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="content">
+        <!-- CURRENT STATE TAB -->
+        <div id="current" class="tab-content active">
+            <div class="alert alert-critical">
+                <div class="alert-icon">🚨</div>
+                <div>
+                    <strong>Critical Finding:</strong> Fast Times is staffed for a restaurant doing $174,000/month in sales but is only generating $63,099/month. Labor costs are 82.9% of sales when industry standard is 30%. The restaurant is operating at 2.76x the appropriate staffing level for its actual sales volume and needs immediate right-sizing.
+                </div>
+            </div>
+            
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Current Monthly Sales</div>
+                    <div class="metric-value">$63,099</div>
+                    <div class="metric-detail">Weekly average: $14,570</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Current Labor Cost</div>
+                    <div class="metric-value color-accent">$52,315</div>
+                    <div class="metric-detail">Including GM salary + taxes</div>
+                    <div class="metric-change negative">82.9% of sales</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Current Staff Hours</div>
+                    <div class="metric-value">2,374/mo</div>
+                    <div class="metric-detail">548 hours/week average</div>
+                    <div class="metric-change negative">3.8x industry benchmark</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Monthly Loss</div>
+                    <div class="metric-value color-accent">-$33,169</div>
+                    <div class="metric-detail">$1,106/day burn rate</div>
+                    <div class="metric-change negative">Annual: -$398,028</div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">The Core Problem: Overstaffing Reality</div>
+                
+                <div class="key-insight">
+                    <strong>Key Insight:</strong> At current sales of $63K/month, Fast Times should be operating with approximately 550 labor hours/month at a 30% labor ratio. Currently operating at 2,374 hours/month - 4.3x the appropriate level. Current staffing would be appropriate for a restaurant generating $174K/month.
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th class="text-right">Current State</th>
+                            <th class="text-right">Industry Target</th>
+                            <th class="text-right">Gap</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Monthly Sales</td>
+                            <td class="text-right mono">$63,099</td>
+                            <td class="text-right mono">$63,099</td>
+                            <td class="text-right mono">-</td>
+                        </tr>
+                        <tr>
+                            <td>Target Labor Budget (30%)</td>
+                            <td class="text-right mono color-accent">$52,315</td>
+                            <td class="text-right mono color-success">$18,930</td>
+                            <td class="text-right mono color-accent">$33,385</td>
+                        </tr>
+                        <tr>
+                            <td>Monthly Labor Hours</td>
+                            <td class="text-right mono color-accent">2,374 hrs</td>
+                            <td class="text-right mono color-success">550 hrs</td>
+                            <td class="text-right mono color-accent">1,824 hrs</td>
+                        </tr>
+                        <tr style="background: var(--warning-soft);">
+                            <td>COGS - Actual (33.2%)</td>
+                            <td class="text-right mono color-warning">$20,977</td>
+                            <td class="text-right mono color-success">$18,930</td>
+                            <td class="text-right mono color-warning">$2,047</td>
+                        </tr>
+                        <tr>
+                            <td>Other Operating Costs</td>
+                            <td class="text-right mono">$22,976</td>
+                            <td class="text-right mono">$22,976</td>
+                            <td class="text-right mono">-</td>
+                        </tr>
+                        <tr class="totals-row">
+                            <td>Total Monthly Costs</td>
+                            <td class="text-right mono">$96,268</td>
+                            <td class="text-right mono">$60,836</td>
+                            <td class="text-right mono">$35,432</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td>Monthly Profit/(Loss)</td>
+                            <td class="text-right mono color-accent">($33,169)</td>
+                            <td class="text-right mono color-success">$2,263</td>
+                            <td class="text-right mono">-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Current Staffing Analysis</div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Position</th>
+                            <th class="text-center">Count</th>
+                            <th class="text-right">Avg Rate</th>
+                            <th class="text-right">Weekly Hours</th>
+                            <th class="text-right">Monthly Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>General Manager (Salary)</td>
+                            <td class="text-center">1</td>
+                            <td class="text-right mono">-</td>
+                            <td class="text-right mono">-</td>
+                            <td class="text-right mono">$4,167</td>
+                        </tr>
+                        <tr>
+                            <td>Leads ($21-25/hr)</td>
+                            <td class="text-center">5</td>
+                            <td class="text-right mono">$22.00</td>
+                            <td class="text-right mono">153</td>
+                            <td class="text-right mono">$14,743</td>
+                        </tr>
+                        <tr>
+                            <td>Cooks ($18.50/hr)</td>
+                            <td class="text-center">4</td>
+                            <td class="text-right mono">$18.38</td>
+                            <td class="text-right mono">90</td>
+                            <td class="text-right mono">$7,262</td>
+                        </tr>
+                        <tr>
+                            <td>FOH ($17-18/hr)</td>
+                            <td class="text-center">6</td>
+                            <td class="text-right mono">$17.33</td>
+                            <td class="text-right mono">132</td>
+                            <td class="text-right mono">$9,901</td>
+                        </tr>
+                        <tr>
+                            <td>Prep ($18/hr)</td>
+                            <td class="text-center">2</td>
+                            <td class="text-right mono">$18.00</td>
+                            <td class="text-right mono">45</td>
+                            <td class="text-right mono">$3,488</td>
+                        </tr>
+                        <tr>
+                            <td>Security ($25/hr)</td>
+                            <td class="text-center">1</td>
+                            <td class="text-right mono">$25.00</td>
+                            <td class="text-right mono">16</td>
+                            <td class="text-right mono">$1,678</td>
+                        </tr>
+                        <tr class="totals-row">
+                            <td>Total (18 employees)</td>
+                            <td class="text-center">18</td>
+                            <td class="text-right mono">$20.27</td>
+                            <td class="text-right mono">548</td>
+                            <td class="text-right mono">$52,315</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="key-insight">
+                    <strong>Critical Issue:</strong> Core team (GM + Oscar + Mikey) alone costs $11,994/month = 19% of sales. At industry standard 30% total labor, only $6,936/month remains for all other staff, security, and operations.
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Food Cost Context: Early Stage Operations</div>
+                
+                <div class="methodology-box">
+                    <strong>November Food Cost:</strong> 33.2% of sales ($20,977.30). This is higher than mature industry standard (28-30%) but expected for a restaurant in its first full month of operations without economies of scale. As sales volume increases, food cost percentage should naturally decrease through better purchasing power, reduced waste, and operational efficiency.
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Food Cost Scenario</th>
+                            <th class="text-right">% of Sales</th>
+                            <th class="text-right">At Current Sales</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Current (November)</td>
+                            <td class="text-right mono">33.2%</td>
+                            <td class="text-right mono">$20,977</td>
+                            <td>First full month, no scale yet</td>
+                        </tr>
+                        <tr>
+                            <td>Target with Scale (30%)</td>
+                            <td class="text-right mono">30.0%</td>
+                            <td class="text-right mono">$18,930</td>
+                            <td>Achievable at higher volume</td>
+                        </tr>
+                        <tr>
+                            <td>Best Practice (28%)</td>
+                            <td class="text-right mono">28.0%</td>
+                            <td class="text-right mono">$17,668</td>
+                            <td>High-volume operations</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="key-insight">
+                    <strong>Expectation:</strong> Food cost will naturally improve as sales increase. At $78K/month with better purchasing and less waste, targeting 30-31% is realistic. This analysis uses 33.2% conservatively for current scenarios, with 30% shown as achievable target in growth scenarios.
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">What Sales Level Justifies Current Staffing?</div>
+                
+                <div class="methodology-box">
+                    <strong>Calculation Method:</strong> Current monthly labor cost ÷ Target labor % = Required sales to justify staffing
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Target Labor %</th>
+                            <th class="text-right">Current Labor Cost</th>
+                            <th class="text-right">Required Monthly Sales</th>
+                            <th class="text-right">vs. Current ($63K)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>30% (Industry Standard)</td>
+                            <td class="text-right mono">$52,315</td>
+                            <td class="text-right mono">$174,383</td>
+                            <td class="text-right mono color-accent">+176% needed</td>
+                        </tr>
+                        <tr>
+                            <td>35% (Optimized)</td>
+                            <td class="text-right mono">$52,315</td>
+                            <td class="text-right mono">$149,471</td>
+                            <td class="text-right mono color-accent">+137% needed</td>
+                        </tr>
+                        <tr>
+                            <td>40% (Acceptable)</td>
+                            <td class="text-right mono">$52,315</td>
+                            <td class="text-right mono">$130,788</td>
+                            <td class="text-right mono color-accent">+107% needed</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td>82.9% (CURRENT ACTUAL)</td>
+                            <td class="text-right mono">$52,315</td>
+                            <td class="text-right mono">$63,099</td>
+                            <td class="text-right mono">Current reality</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="methodology-box">
+                    <strong>Conclusion:</strong> Current staffing level is appropriate for a restaurant generating $174,383/month at industry standard labor ratios, or $130,788/month at 40% labor. At actual sales of $63,099/month, the restaurant is staffed at 2.76x the appropriate level.
+                </div>
+            </div>
+        </div>
+        
+        
+        <!-- EMPLOYEE DECISIONS TAB -->
+        <div id="employees" class="tab-content">
+            <div class="alert alert-warning">
+                <div class="alert-icon">👥</div>
+                <div>
+                    <strong>Employee Decision Matrix:</strong> Complete roster of 18 employees with specific KEEP/CUT/MAYBE recommendations for both scenarios. Use this as your "chopping list" for making staffing decisions.
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Complete Staffing Decision Matrix</div>
+                
+                <div class="methodology-box" style="margin-bottom: 1.5rem;">
+                    <strong>How to read this table:</strong><br>
+                    • <strong>Scenario 1 (10 staff):</strong> Bare minimum to operate - high burnout risk<br>
+                    • <strong>Scenario 2 (13 staff):</strong> Right-sized for current sales - sustainable operations<br>
+                    • <span style="background: #C6EFCE; padding: 2px 8px; border-radius: 3px; color: #006100; font-weight: bold;">KEEP</span> = Essential, do not cut<br>
+                    • <span style="background: #FFEB9C; padding: 2px 8px; border-radius: 3px; color: #9C5700; font-weight: bold;">MAYBE</span> = Evaluate based on schedule needs<br>
+                    • <span style="background: #FFC7CE; padding: 2px 8px; border-radius: 3px; color: #9C0006; font-weight: bold;">CUT</span> = Not essential to scenario
+                </div>
+                
+                <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="min-width: 150px;">Employee</th>
+                            <th style="min-width: 120px;">Position</th>
+                            <th class="text-right" style="min-width: 80px;">Rate/Hr</th>
+                            <th class="text-right" style="min-width: 80px;">Hrs/Wk</th>
+                            <th class="text-right" style="min-width: 100px;">Monthly $</th>
+                            <th class="text-center" style="min-width: 100px;">Scenario 1</th>
+                            <th class="text-center" style="min-width: 100px;">Scenario 2</th>
+                            <th style="min-width: 250px;">Decision Rationale</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- CORE TEAM (Non-Negotiable) -->
+                        <tr style="background: rgba(255, 230, 153, 0.15); border-left: 4px solid #FFE699;">
+                            <td><strong>Andrew Stewart</strong></td>
+                            <td>GM (Salary)</td>
+                            <td class="text-right mono">-</td>
+                            <td class="text-right mono">-</td>
+                            <td class="text-right mono">$4,167</td>
+                            <td class="text-center"><span class="badge-keep">KEEP</span></td>
+                            <td class="text-center"><span class="badge-keep">KEEP</span></td>
+                            <td><strong>CORE TEAM:</strong> Salaried GM, essential leadership - non-negotiable</td>
+                        </tr>
+                        <tr style="background: rgba(255, 230, 153, 0.15); border-left: 4px solid #FFE699;">
+                            <td><strong>Oscar Sparbel</strong></td>
+                            <td>Lead</td>
+                            <td class="text-right mono">$22.00</td>
+                            <td class="text-right mono">40.6</td>
+                            <td class="text-right mono">$3,893</td>
+                            <td class="text-center"><span class="badge-keep">KEEP</span></td>
+                            <td class="text-center"><span class="badge-keep">KEEP</span></td>
+                            <td><strong>CORE TEAM:</strong> Operations lead, high performer, fully cross-trained - non-negotiable</td>
+                        </tr>
+                        <tr style="background: rgba(255, 230, 153, 0.15); border-left: 4px solid #FFE699;">
+                            <td><strong>Mikey Williams</strong></td>
+                            <td>Lead</td>
+                            <td class="text-right mono">$25.00</td>
+                            <td class="text-right mono">36.3</td>
+                            <td class="text-right mono">$3,934</td>
+                            <td class="text-center"><span class="badge-keep">KEEP</span></td>
+                            <td class="text-center"><span class="badge-keep">KEEP</span></td>
+                            <td><strong>CORE TEAM:</strong> Recipe dev, ordering, food cost management - non-negotiable</td>
+                        </tr>
+                        
+                        <!-- SECURITY (Required) -->
+                        <tr style="background: rgba(252, 213, 180, 0.15); border-left: 4px solid #FCD5B4;">
+                            <td><strong>Andrew Wright</strong></td>
+                            <td>Security</td>
+                            <td class="text-right mono">$25.00</td>
+                            <td class="text-right mono">15.5</td>
+                            <td class="text-right mono">$1,678</td>
+                            <td class="text-center"><span class="badge-keep">KEEP</span></td>
+                            <td class="text-center"><span class="badge-keep">KEEP</span></td>
+                            <td><strong>REQUIRED:</strong> Weekend late-night security - legally/operationally required</td>
+                        </tr>
+                        
+                        <!-- ADDITIONAL LEADS -->
+                        <tr>
+                            <td>Milo Blue</td>
+                            <td>Lead</td>
+                            <td class="text-right mono">$21.00</td>
+                            <td class="text-right mono">27.4</td>
+                            <td class="text-right mono">$2,489</td>
+                            <td class="text-center"><span class="badge-cut">CUT</span></td>
+                            <td class="text-center"><span class="badge-keep">KEEP</span></td>
+                            <td>Strong lead, reliable, cross-trained - best of remaining leads for Scenario 2</td>
+                        </tr>
+                        <tr>
+                            <td>Alivia Bergmann</td>
+                            <td>Lead</td>
+                            <td class="text-right mono">$21.00</td>
+                            <td class="text-right mono">22.8</td>
+                            <td class="text-right mono">$2,079</td>
+                            <td class="text-center"><span class="badge-cut">CUT</span></td>
+                            <td class="text-center"><span class="badge-maybe">MAYBE</span></td>
+                            <td>Can work both cook and lead - versatile but lower priority than Milo</td>
+                        </tr>
+                        <tr>
+                            <td>Lawrence Lopez</td>
+                            <td>Lead</td>
+                            <td class="text-right mono">$21.00</td>
+                            <td class="text-right mono">25.8</td>
+                            <td class="text-right mono">$2,349</td>
+                            <td class="text-center"><span class="badge-cut">CUT</span></td>
+                            <td class="text-center"><span class="badge-maybe">MAYBE</span></td>
+                            <td>Leadership capability - backup option if need additional coverage</td>
+                        </tr>
+                        
+                        <!-- COOKS -->
+                        <tr>
+                            <td>David Jones</td>
+                            <td>Cook</td>
+                            <td class="text-right mono">$18.50</td>
+                            <td class="text-right mono">41.5</td>
+                            <td class="text-right mono">$3,386</td>
+                            <td class="text-center"><span class="badge-keep">KEEP</span></td>
+                            <td class="text-center"><span class="badge-keep">KEEP</span></td>
+                            <td>Highest cook hours, most reliable, experienced - #1 cook priority</td>
+                        </tr>
+                        <tr>
+                            <td>Dylan Brookshire</td>
+                            <td>Cook</td>
+                            <td class="text-right mono">$18.50</td>
+                            <td class="text-right mono">34.1</td>
+                            <td class="text-right mono">$2,729</td>
+                            <td class="text-center"><span class="badge-keep">KEEP</span></td>
+                            <td class="text-center"><span class="badge-keep">KEEP</span></td>
+                            <td>Solid, consistent performer - strong #2 cook</td>
+                        </tr>
+                        <tr>
+                            <td>Vince Stott</td>
+                            <td>Cook</td>
+                            <td class="text-right mono">$18.50</td>
+                            <td class="text-right mono">11.5</td>
+                            <td class="text-right mono">$918</td>
+                            <td class="text-center"><span class="badge-cut">CUT</span></td>
+                            <td class="text-center"><span class="badge-cut">CUT</span></td>
+                            <td>Low hours - can be replaced with cross-training from other staff</td>
+                        </tr>
+                        <tr>
+                            <td>Michael Thompson</td>
+                            <td>Cook</td>
+                            <td class="text-right mono">$18.00</td>
+                            <td class="text-right mono">2.8</td>
+                            <td class="text-right mono">$219</td>
+                            <td class="text-center"><span class="badge-cut">CUT</span></td>
+                            <td class="text-center"><span class="badge-cut">CUT</span></td>
+                            <td>Very low hours - minimal commitment, not essential</td>
+                        </tr>
+                        
+                        <!-- FOH -->
+                        <tr>
+                            <td>Aaron Warnock</td>
+                            <td>FOH</td>
+                            <td class="text-right mono">$17.00</td>
+                            <td class="text-right mono">35.5</td>
+                            <td class="text-right mono">$2,609</td>
+                            <td class="text-center"><span class="badge-keep">KEEP</span></td>
+                            <td class="text-center"><span class="badge-keep">KEEP</span></td>
+                            <td>Highest FOH hours, most consistent and reliable - essential front-of-house</td>
+                        </tr>
+                        <tr>
+                            <td>Kyran Lindsay</td>
+                            <td>FOH</td>
+                            <td class="text-right mono">$18.00</td>
+                            <td class="text-right mono">29.4</td>
+                            <td class="text-right mono">$2,292</td>
+                            <td class="text-center"><span class="badge-keep">KEEP</span></td>
+                            <td class="text-center"><span class="badge-keep">KEEP</span></td>
+                            <td>Strong performer, good availability - solid #2 FOH</td>
+                        </tr>
+                        <tr>
+                            <td>Ava Meisel</td>
+                            <td>FOH</td>
+                            <td class="text-right mono">$17.00</td>
+                            <td class="text-right mono">20.0</td>
+                            <td class="text-right mono">$1,472</td>
+                            <td class="text-center"><span class="badge-cut">CUT</span></td>
+                            <td class="text-center"><span class="badge-maybe">MAYBE</span></td>
+                            <td>Decent hours but can trim to essentials in survival mode</td>
+                        </tr>
+                        <tr>
+                            <td>Eliza Bourgeau</td>
+                            <td>FOH</td>
+                            <td class="text-right mono">$17.00</td>
+                            <td class="text-right mono">26.8</td>
+                            <td class="text-right mono">$1,975</td>
+                            <td class="text-center"><span class="badge-cut">CUT</span></td>
+                            <td class="text-center"><span class="badge-maybe">MAYBE</span></td>
+                            <td>Moderate performer - backup option if need extra FOH coverage</td>
+                        </tr>
+                        <tr>
+                            <td>Josh Schultz</td>
+                            <td>FOH</td>
+                            <td class="text-right mono">$17.00</td>
+                            <td class="text-right mono">14.6</td>
+                            <td class="text-right mono">$1,075</td>
+                            <td class="text-center"><span class="badge-cut">CUT</span></td>
+                            <td class="text-center"><span class="badge-cut">CUT</span></td>
+                            <td>Low hours - first to cut when reducing FOH staff</td>
+                        </tr>
+                        <tr>
+                            <td>Alex Sebald</td>
+                            <td>FOH</td>
+                            <td class="text-right mono">$18.00</td>
+                            <td class="text-right mono">6.1</td>
+                            <td class="text-right mono">$476</td>
+                            <td class="text-center"><span class="badge-cut">CUT</span></td>
+                            <td class="text-center"><span class="badge-cut">CUT</span></td>
+                            <td>Very low hours - minimal commitment to operations</td>
+                        </tr>
+                        
+                        <!-- PREP -->
+                        <tr>
+                            <td>Samuel Gander</td>
+                            <td>Prep</td>
+                            <td class="text-right mono">$18.00</td>
+                            <td class="text-right mono">33.7</td>
+                            <td class="text-right mono">$2,627</td>
+                            <td class="text-center"><span class="badge-keep">KEEP</span></td>
+                            <td class="text-center"><span class="badge-keep">KEEP</span></td>
+                            <td>Primary prep person, essential - can cross-train to work line during service</td>
+                        </tr>
+                        <tr>
+                            <td>David Fullerton</td>
+                            <td>Prep</td>
+                            <td class="text-right mono">$18.00</td>
+                            <td class="text-right mono">11.0</td>
+                            <td class="text-right mono">$858</td>
+                            <td class="text-center"><span class="badge-cut">CUT</span></td>
+                            <td class="text-center"><span class="badge-cut">CUT</span></td>
+                            <td>Low hours - redundant with Samuel as primary prep</td>
+                        </tr>
+                        
+                        <tr class="totals-row">
+                            <td colspan="2"><strong>CURRENT TOTAL (18 employees)</strong></td>
+                            <td class="text-right mono" colspan="2"><strong>548 hrs/wk</strong></td>
+                            <td class="text-right mono"><strong>$52,315/mo</strong></td>
+                            <td colspan="3"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Scenario Breakdowns</div>
+                
+                <div class="methodology-box">
+                    <h3 style="margin: 0 0 0.75rem 0; color: var(--accent);">SCENARIO 1: SURVIVAL MODE - 10 Staff</h3>
+                    <strong>Monthly Labor:</strong> $27,133 (43% of sales)<br>
+                    <strong>Weekly Hours:</strong> 291 hours<br>
+                    <strong>Financial Impact:</strong> Still losing -$7,959/month (but saves $25,182 vs current)<br><br>
+                    
+                    <strong>WHO STAYS (Definite KEEP):</strong><br>
+                    • Core Team: Andrew Stewart (GM), Oscar Sparbel, Mikey Williams<br>
+                    • Security: Andrew Wright<br>
+                    • Top Cooks: David Jones, Dylan Brookshire<br>
+                    • Top FOH: Aaron Warnock, Kyran Lindsay<br>
+                    • Prep: Samuel Gander (cross-trains to line)<br>
+                    • +1 flexible position based on schedule gaps<br><br>
+                    
+                    <strong>WHO GOES (8-9 people cut):</strong><br>
+                    All additional leads (Milo, Alivia, Lawrence), low-hour cooks (Vince, Michael), low-hour FOH (Ava, Eliza, Josh, Alex), redundant prep (David F.)<br><br>
+                    
+                    <strong>RISKS:</strong> Extreme burnout, no backup coverage, quality may suffer, very difficult to execute growth
+                </div>
+                
+                <div class="methodology-box" style="margin-top: 1.5rem;">
+                    <h3 style="margin: 0 0 0.75rem 0; color: var(--warning);">SCENARIO 2: RIGHT-SIZED - 13 Staff</h3>
+                    <strong>Monthly Labor:</strong> $30,288 (48% of sales)<br>
+                    <strong>Weekly Hours:</strong> 325 hours<br>
+                    <strong>Financial Impact:</strong> Still losing -$11,114/month (but saves $22,055 vs current)<br><br>
+                    
+                    <strong>WHO STAYS (Definite KEEP + Additions):</strong><br>
+                    • Core Team: Andrew Stewart (GM), Oscar Sparbel, Mikey Williams<br>
+                    • Security: Andrew Wright<br>
+                    • Additional Lead: Milo Blue (for coverage and backup management)<br>
+                    • Cooks: David Jones, Dylan Brookshire + 1 cross-trained from leads<br>
+                    • FOH: Aaron Warnock, Kyran Lindsay + 2 more from MAYBE group<br>
+                    • Prep: Samuel Gander<br><br>
+                    
+                    <strong>WHO GOES (5-7 people cut):</strong><br>
+                    Definitely: Vince, Michael, Josh, Alex, David F.<br>
+                    Possibly: 1-2 from Alivia, Lawrence, Ava, Eliza depending on final schedule<br><br>
+                    
+                    <strong>ASSESSMENT:</strong> Proper staffing for $63K/month operation, sustainable operations, better service quality, still need sales growth for profitability
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Decision-Making Criteria</div>
+                
+                <div class="key-insight">
+                    <strong>Priority 1: Core Team + Security = Absolute Non-Negotiable</strong><br>
+                    Andrew (GM), Oscar, Mikey, and Andrew Wright must be retained in ANY scenario. They represent the operational foundation and leadership of the restaurant.
+                </div>
+                
+                <div class="key-insight">
+                    <strong>Priority 2: Cross-Training Ability = Major Competitive Advantage</strong><br>
+                    Employees who can work multiple positions (cook/line, FOH/expo, prep/cook) provide schedule flexibility and reduce need for specialists. Samuel (prep who can work line) and Oscar/Mikey (can do everything) exemplify this value.
+                </div>
+                
+                <div class="key-insight">
+                    <strong>Priority 3: Hours Worked = Commitment Indicator</strong><br>
+                    Weekly hours strongly correlate with reliability and availability. David Jones (41.5 hrs), Oscar (40.6), Aaron Warnock (35.5), Dylan (34.1), and Samuel (33.7) show consistent high commitment. Low-hour employees (Michael 2.8 hrs, Alex 6.1 hrs) indicate limited availability or commitment.
+                </div>
+                
+                <div class="key-insight">
+                    <strong>Priority 4: Late-Night Availability = Premium Value</strong><br>
+                    Friday/Saturday midnight-4am shifts generate 25%+ of revenue but are hardest to staff. Employees willing and able to work these shifts have outsized value to operations.
+                </div>
+                
+                <div class="key-insight">
+                    <strong>Priority 5: Speed, Quality, Reliability Balanced with Cost</strong><br>
+                    A $21/hr reliable employee who shows up on time and works efficiently is more valuable than a $17/hr employee with attendance issues. However, wage premiums should align with actual performance differential.
+                </div>
+            </div>
+        </div>
+        
+        <!-- DETAILED P&L TAB -->
+        <div id="detailed-pl" class="tab-content">
+            <div class="alert alert-info">
+                <div class="alert-icon">💰</div>
+                <div>
+                    <strong>Detailed Financial Breakdown:</strong> Complete P&L using actual November 2025 costs from invoices and bills. Some line items are still TBD (marked in gray). One-time repair costs shown separately. This represents known recurring monthly expenses only.
+                </div>
+            </div>
+            
+            <div class="metrics-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+                <div class="metric-card">
+                    <div class="metric-label">Revenue</div>
+                    <div class="metric-value">$63,099</div>
+                    <div class="metric-detail">Toast POS 60-day avg</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">COGS</div>
+                    <div class="metric-value">$20,977</div>
+                    <div class="metric-detail">33.2% of sales</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Labor</div>
+                    <div class="metric-value color-accent">$52,646</div>
+                    <div class="metric-detail">83.4% of sales</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Occupancy</div>
+                    <div class="metric-value">$8,889</div>
+                    <div class="metric-detail">14.1% of sales</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Operating Costs</div>
+                    <div class="metric-value">$9,218</div>
+                    <div class="metric-detail">Utilities, services, permits</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Net Loss (Known)</div>
+                    <div class="metric-value color-accent">-$28,531</div>
+                    <div class="metric-detail">Recurring costs only</div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Complete Line-Item Breakdown</div>
+                
+                <h3 style="margin: 1.5rem 0 1rem 0;">Revenue</h3>
+                <table>
+                    <tbody>
+                        <tr style="background: var(--success-soft);">
+                            <td><strong>Gross Sales</strong></td>
+                            <td class="text-right mono"><strong>$63,099.21</strong></td>
+                            <td class="text-right mono"><strong>100.0%</strong></td>
+                            <td>Toast POS 60-day average, all channels</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 style="margin: 1.5rem 0 1rem 0;">Cost of Goods Sold (Food & Beverage)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 35%;">Vendor</th>
+                            <th class="text-right" style="width: 20%;">Monthly Cost</th>
+                            <th class="text-right" style="width: 15%;">% of Sales</th>
+                            <th style="width: 30%;">Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>US Foods</td>
+                            <td class="text-right mono">$19,339.77</td>
+                            <td class="text-right mono">30.7%</td>
+                            <td>Primary food distributor</td>
+                        </tr>
+                        <tr>
+                            <td>Earthly Gourmet</td>
+                            <td class="text-right mono">$1,637.50</td>
+                            <td class="text-right mono">2.6%</td>
+                            <td>Specialty produce/ingredients</td>
+                        </tr>
+                        <tr>
+                            <td>Catscratch Cookies</td>
+                            <td class="text-right mono">$276.00</td>
+                            <td class="text-right mono">0.4%</td>
+                            <td>Cookie supplier</td>
+                        </tr>
+                        <tr class="color-dim">
+                            <td>Cash & Carry</td>
+                            <td class="text-right mono"><em>TBD</em></td>
+                            <td class="text-right mono">-</td>
+                            <td>Need actual monthly invoices</td>
+                        </tr>
+                        <tr class="color-dim">
+                            <td>Flatiron Pepper Co</td>
+                            <td class="text-right mono"><em>TBD</em></td>
+                            <td class="text-right mono">-</td>
+                            <td>Need actual monthly invoices</td>
+                        </tr>
+                        <tr class="color-dim">
+                            <td>Portland Soda</td>
+                            <td class="text-right mono"><em>TBD</em></td>
+                            <td class="text-right mono">-</td>
+                            <td>Need actual monthly invoices</td>
+                        </tr>
+                        <tr class="totals-row">
+                            <td><strong>Total COGS</strong></td>
+                            <td class="text-right mono"><strong>$20,977.30</strong></td>
+                            <td class="text-right mono"><strong>33.2%</strong></td>
+                            <td>November 2025 actual (3 vendors TBD)</td>
+                        </tr>
+                        <tr style="background: var(--success-soft);">
+                            <td><strong>Gross Profit</strong></td>
+                            <td class="text-right mono"><strong>$42,121.91</strong></td>
+                            <td class="text-right mono"><strong>66.8%</strong></td>
+                            <td>Revenue minus COGS</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 style="margin: 1.5rem 0 1rem 0;">Labor Costs</h3>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>Hourly Wages + Employer Taxes</td>
+                            <td class="text-right mono">$51,492.54</td>
+                            <td class="text-right mono">81.6%</td>
+                            <td>Gusto payroll incl. FICA, unemployment, etc.</td>
+                        </tr>
+                        <tr>
+                            <td>Workers Compensation Insurance</td>
+                            <td class="text-right mono">$1,153.73</td>
+                            <td class="text-right mono">1.8%</td>
+                            <td>Monthly workers comp premium</td>
+                        </tr>
+                        <tr class="totals-row">
+                            <td><strong>Total Labor</strong></td>
+                            <td class="text-right mono"><strong>$52,646.27</strong></td>
+                            <td class="text-right mono"><strong>83.4%</strong></td>
+                            <td>All labor-related costs</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 style="margin: 1.5rem 0 1rem 0;">Occupancy (Rent)</h3>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>Base Rent - 624 E Burnside</td>
+                            <td class="text-right mono">$8,300.00</td>
+                            <td class="text-right mono">13.2%</td>
+                            <td>Monthly rent payment</td>
+                        </tr>
+                        <tr>
+                            <td>Alley Lease</td>
+                            <td class="text-right mono">$589.00</td>
+                            <td class="text-right mono">0.9%</td>
+                            <td>Additional alley space</td>
+                        </tr>
+                        <tr class="totals-row">
+                            <td><strong>Total Occupancy</strong></td>
+                            <td class="text-right mono"><strong>$8,889.00</strong></td>
+                            <td class="text-right mono"><strong>14.1%</strong></td>
+                            <td>Fixed monthly occupancy cost</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 style="margin: 1.5rem 0 1rem 0;">Utilities</h3>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>PGE (Electric)</td>
+                            <td class="text-right mono">$1,700.00</td>
+                            <td class="text-right mono">2.7%</td>
+                            <td>Monthly electric bill</td>
+                        </tr>
+                        <tr>
+                            <td>NW Natural (Gas)</td>
+                            <td class="text-right mono">$515.43</td>
+                            <td class="text-right mono">0.8%</td>
+                            <td>Monthly gas bill (ovens, hot water)</td>
+                        </tr>
+                        <tr>
+                            <td>Internet - Comcast</td>
+                            <td class="text-right mono">$128.84</td>
+                            <td class="text-right mono">0.2%</td>
+                            <td>Monthly internet service</td>
+                        </tr>
+                        <tr class="color-dim">
+                            <td>Water/Sewer - City of Portland</td>
+                            <td class="text-right mono"><em>TBD</em></td>
+                            <td class="text-right mono">-</td>
+                            <td>Need actual water/sewer bill</td>
+                        </tr>
+                        <tr class="color-dim">
+                            <td>Waste Management</td>
+                            <td class="text-right mono"><em>TBD</em></td>
+                            <td class="text-right mono">-</td>
+                            <td>Need actual trash/recycling cost</td>
+                        </tr>
+                        <tr class="totals-row">
+                            <td><strong>Total Utilities</strong></td>
+                            <td class="text-right mono"><strong>$2,344.27</strong></td>
+                            <td class="text-right mono"><strong>3.7%</strong></td>
+                            <td>Known utilities (2 items TBD)</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 style="margin: 1.5rem 0 1rem 0;">Services & Maintenance</h3>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>Everon Service</td>
+                            <td class="text-right mono">$660.00</td>
+                            <td class="text-right mono">1.0%</td>
+                            <td>Security system monitoring</td>
+                        </tr>
+                        <tr>
+                            <td>Linen Service</td>
+                            <td class="text-right mono">$434.55</td>
+                            <td class="text-right mono">0.7%</td>
+                            <td>Weekly linen delivery/cleaning</td>
+                        </tr>
+                        <tr>
+                            <td>Rose's Dishwasher Service</td>
+                            <td class="text-right mono">$229.00</td>
+                            <td class="text-right mono">0.4%</td>
+                            <td>Dishwasher maintenance & chemicals</td>
+                        </tr>
+                        <tr>
+                            <td>Office Supplies</td>
+                            <td class="text-right mono">$150.00</td>
+                            <td class="text-right mono">0.2%</td>
+                            <td>Monthly estimate for office/admin supplies</td>
+                        </tr>
+                        <tr>
+                            <td>Automatic Ice Service</td>
+                            <td class="text-right mono">$149.00</td>
+                            <td class="text-right mono">0.2%</td>
+                            <td>Ice machine lease/service</td>
+                        </tr>
+                        <tr>
+                            <td>NuCo Service</td>
+                            <td class="text-right mono">$94.99</td>
+                            <td class="text-right mono">0.2%</td>
+                            <td>Hood/exhaust cleaning service</td>
+                        </tr>
+                        <tr class="totals-row">
+                            <td><strong>Total Services</strong></td>
+                            <td class="text-right mono"><strong>$1,717.54</strong></td>
+                            <td class="text-right mono"><strong>2.7%</strong></td>
+                            <td>Recurring monthly service contracts</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 style="margin: 1.5rem 0 1rem 0;">Licenses & Permits</h3>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>Multnomah County Health Permit</td>
+                            <td class="text-right mono">$107.50</td>
+                            <td class="text-right mono">0.2%</td>
+                            <td>$1,290 annual ÷ 12 months</td>
+                        </tr>
+                        <tr class="color-dim">
+                            <td>Business License (City of Portland)</td>
+                            <td class="text-right mono"><em>TBD</em></td>
+                            <td class="text-right mono">-</td>
+                            <td>Need annual cost</td>
+                        </tr>
+                        <tr class="color-dim">
+                            <td>OLCC Liquor License (if applicable)</td>
+                            <td class="text-right mono"><em>TBD</em></td>
+                            <td class="text-right mono">-</td>
+                            <td>Need annual renewal cost if applicable</td>
+                        </tr>
+                        <tr class="totals-row">
+                            <td><strong>Total Licenses/Permits</strong></td>
+                            <td class="text-right mono"><strong>$107.50</strong></td>
+                            <td class="text-right mono"><strong>0.2%</strong></td>
+                            <td>Known permits only</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 style="margin: 1.5rem 0 1rem 0;">Variable Costs (Estimated)</h3>
+                <div class="methodology-box">
+                    <strong>⚠️ Important:</strong> These are ESTIMATES based on industry averages. Get actual merchant statements and delivery platform reports for real numbers. These could be materially different from reality.
+                </div>
+                <table>
+                    <tbody>
+                        <tr style="background: rgba(255, 165, 2, 0.1);">
+                            <td>Delivery Platform Fees (est.)</td>
+                            <td class="text-right mono">$3,155</td>
+                            <td class="text-right mono">5.0%</td>
+                            <td>Assumes 20% orders via platforms at 25% commission - NEED ACTUAL DATA</td>
+                        </tr>
+                        <tr style="background: rgba(255, 165, 2, 0.1);">
+                            <td>Credit Card Processing (est.)</td>
+                            <td class="text-right mono">$1,893</td>
+                            <td class="text-right mono">3.0%</td>
+                            <td>Industry avg 3% - NEED ACTUAL MERCHANT STATEMENTS</td>
+                        </tr>
+                        <tr class="totals-row">
+                            <td><strong>Total Variable Costs (est.)</strong></td>
+                            <td class="text-right mono"><strong>$5,048</strong></td>
+                            <td class="text-right mono"><strong>8.0%</strong></td>
+                            <td>Both estimated - could be higher or lower</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">One-Time Costs (November) - NOT Recurring</div>
+                
+                <div class="methodology-box">
+                    These repair costs appeared in November invoices but are NOT expected to recur monthly. Shown for transparency but NOT included in monthly P&L calculations.
+                </div>
+                
+                <table>
+                    <tbody>
+                        <tr class="color-dim">
+                            <td>Plumbing Repairs</td>
+                            <td class="text-right mono">$2,961.38</td>
+                            <td class="text-right mono">-</td>
+                            <td>One-time major plumbing work</td>
+                        </tr>
+                        <tr class="color-dim">
+                            <td>Electrician</td>
+                            <td class="text-right mono">$357.00</td>
+                            <td class="text-right mono">-</td>
+                            <td>One-time electrical repairs</td>
+                        </tr>
+                        <tr class="color-dim">
+                            <td>CT Drains</td>
+                            <td class="text-right mono">$195.00</td>
+                            <td class="text-right mono">-</td>
+                            <td>One-time drain service</td>
+                        </tr>
+                        <tr class="totals-row color-dim">
+                            <td><strong>Total One-Time Repairs</strong></td>
+                            <td class="text-right mono"><strong>$3,513.38</strong></td>
+                            <td class="text-right mono">-</td>
+                            <td>Not included in recurring totals</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Summary P&L - Known Recurring Costs Only</div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 50%;">Line Item</th>
+                            <th class="text-right" style="width: 25%;">Amount</th>
+                            <th class="text-right" style="width: 25%;">% of Sales</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="background: var(--success-soft);">
+                            <td><strong>Revenue (Sales)</strong></td>
+                            <td class="text-right mono"><strong>$63,099</strong></td>
+                            <td class="text-right mono"><strong>100.0%</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Less: Cost of Goods Sold</td>
+                            <td class="text-right mono">($20,977)</td>
+                            <td class="text-right mono">33.2%</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td><strong>= Gross Profit</strong></td>
+                            <td class="text-right mono"><strong>$42,122</strong></td>
+                            <td class="text-right mono"><strong>66.8%</strong></td>
+                        </tr>
+                        <tr style="height: 0.5rem;"><td colspan="3"></td></tr>
+                        <tr>
+                            <td>Less: Labor & Workers Comp</td>
+                            <td class="text-right mono">($52,646)</td>
+                            <td class="text-right mono">83.4%</td>
+                        </tr>
+                        <tr>
+                            <td>Less: Occupancy (Rent)</td>
+                            <td class="text-right mono">($8,889)</td>
+                            <td class="text-right mono">14.1%</td>
+                        </tr>
+                        <tr>
+                            <td>Less: Utilities</td>
+                            <td class="text-right mono">($2,344)</td>
+                            <td class="text-right mono">3.7%</td>
+                        </tr>
+                        <tr>
+                            <td>Less: Services & Maintenance</td>
+                            <td class="text-right mono">($1,718)</td>
+                            <td class="text-right mono">2.7%</td>
+                        </tr>
+                        <tr>
+                            <td>Less: Licenses & Permits</td>
+                            <td class="text-right mono">($108)</td>
+                            <td class="text-right mono">0.2%</td>
+                        </tr>
+                        <tr>
+                            <td>Less: Variable Costs (est.)</td>
+                            <td class="text-right mono">($5,048)</td>
+                            <td class="text-right mono">8.0%</td>
+                        </tr>
+                        <tr class="totals-row">
+                            <td><strong>= Total Operating Expenses</strong></td>
+                            <td class="text-right mono"><strong>($70,753)</strong></td>
+                            <td class="text-right mono"><strong>112.1%</strong></td>
+                        </tr>
+                        <tr style="height: 0.5rem;"><td colspan="3"></td></tr>
+                        <tr class="highlight-row" style="background: var(--accent-soft);">
+                            <td><strong>= NET LOSS (Known Costs)</strong></td>
+                            <td class="text-right mono color-accent"><strong>($28,531)</strong></td>
+                            <td class="text-right mono color-accent"><strong>-45.2%</strong></td>
+                        </tr>
+                        <tr class="color-dim">
+                            <td>Plus: Missing costs (estimated)</td>
+                            <td class="text-right mono">($3,000)</td>
+                            <td class="text-right mono">4.8%</td>
+                        </tr>
+                        <tr class="highlight-row" style="background: var(--accent-soft);">
+                            <td><strong>= ESTIMATED ACTUAL LOSS</strong></td>
+                            <td class="text-right mono color-accent"><strong>($31,531)</strong></td>
+                            <td class="text-right mono color-accent"><strong>-50.0%</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="metrics-grid" style="margin-top: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+                    <div class="metric-card">
+                        <div class="metric-label">Daily Burn Rate</div>
+                        <div class="metric-value color-accent">$1,051/day</div>
+                        <div class="metric-detail">Based on known costs</div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-label">Annual Loss Projection</div>
+                        <div class="metric-value color-accent">-$342,372</div>
+                        <div class="metric-detail">If no changes made</div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-label">Break-Even Sales Needed</div>
+                        <div class="metric-value">$105,755/mo</div>
+                        <div class="metric-detail">At current cost structure</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Missing Cost Data - Action Items</div>
+                
+                <div class="alert alert-warning">
+                    <div class="alert-icon">📋</div>
+                    <div>
+                        <strong>To Complete Financial Picture:</strong> The following items need actual invoices/statements collected. True monthly loss is likely $2,000-4,000 higher than shown.
+                    </div>
+                </div>
+                
+                <div class="methodology-box">
+                    <h3 style="margin: 0 0 0.5rem 0;">COGS - Need Actual Monthly Spend:</h3>
+                    • Cash & Carry invoices<br>
+                    • Flatiron Pepper Co invoices<br>
+                    • Portland Soda invoices<br>
+                    • Any other food/beverage vendors<br><br>
+                    
+                    <h3 style="margin: 1rem 0 0.5rem 0;">Utilities - Need Bills:</h3>
+                    • City of Portland Water/Sewer bill<br>
+                    • Waste Management (trash/recycling) bill<br><br>
+                    
+                    <h3 style="margin: 1rem 0 0.5rem 0;">Insurance - Need Policy Docs:</h3>
+                    • General Liability Insurance (annual premium ÷ 12)<br>
+                    • Property Insurance (annual premium ÷ 12)<br>
+                    • Liquor Liability if applicable (annual premium ÷ 12)<br><br>
+                    
+                    <h3 style="margin: 1rem 0 0.5rem 0;">Technology & Processing:</h3>
+                    • Toast POS monthly subscription fee<br>
+                    • Gusto Payroll monthly fee<br>
+                    • Actual credit card merchant statements (last 3 months)<br>
+                    • Actual DoorDash/UberEats commission reports<br><br>
+                    
+                    <h3 style="margin: 1rem 0 0.5rem 0;">Licenses:</h3>
+                    • City of Portland Business License (annual cost)<br>
+                    • OLCC Liquor License renewal (if applicable)<br><br>
+                    
+                    <h3 style="margin: 1rem 0 0.5rem 0;">Debt Service (if any):</h3>
+                    • Business loan payments<br>
+                    • Equipment financing payments<br>
+                    • Line of credit interest<br>
+                    • Credit card interest on business cards
+                </div>
+            </div>
+        </div>
+        
+        <!-- DATA & METHODOLOGY TAB -->
+        <div id="assumptions" class="tab-content">
+            <div class="section">
+                <div class="section-title">Data Sources & Methodology</div>
+                
+                <div class="methodology-box">
+                    <strong>Data Collection Period:</strong> November 24-30, 2025 (one-week payroll snapshot)<br>
+                    <strong>Analysis Date:</strong> December 3, 2025<br>
+                    <strong>Methodology:</strong> Actual payroll data analyzed, projected to monthly figures using 4.33-week multiplier
+                </div>
+                
+                <h3 style="margin: 2rem 0 1rem 0;">Primary Data Sources</h3>
+                
+                <div class="assumption-item">
+                    <div class="assumption-label">1. Sales Data</div>
+                    <strong>Source:</strong> Toast POS Sales Summary (60-day lookback)<br>
+                    <strong>Total Monthly Sales:</strong> $63,099.21<br>
+                    <strong>Weekly Average:</strong> $14,570<br>
+                    <strong>Note:</strong> Late-night hours (12am-4am Fri/Sat) represent 25%+ of weekly revenue
+                </div>
+                
+                <div class="assumption-item">
+                    <div class="assumption-label">2. Labor Data</div>
+                    <strong>Source:</strong> Gusto payroll export (Nov 24-30, 2025)<br>
+                    <strong>Weekly Hours:</strong> 548.46 hours<br>
+                    <strong>Weekly Wages:</strong> $8,553.48<br>
+                    <strong>Average Hourly Rate:</strong> $15.60<br>
+                    <strong>Loaded Rate (w/ employer taxes):</strong> $20.27<br>
+                    <strong>Note:</strong> Includes 30% markup for employer-side payroll taxes, workers comp, benefits
+                </div>
+                
+                <div class="assumption-item">
+                    <div class="assumption-label">3. Food Cost Data (ACTUAL)</div>
+                    <strong>Source:</strong> November 2025 vendor invoices<br>
+                    <strong>Total November COGS:</strong> $20,977.30<br>
+                    <strong>Food Cost %:</strong> 33.2% of sales<br>
+                    <strong>Vendors:</strong> US Foods, Earthly Gourmet, Cash & Carry, Catscratch Cookies, Flatiron Pepper, Portland Soda<br>
+                    <strong>Note:</strong> This is 3.2 percentage points above industry standard (30%), representing $2,047/month in excess food costs
+                </div>
+                
+                <div class="assumption-item">
+                    <div class="assumption-label">4. Fixed Costs</div>
+                    <strong>Source:</strong> Cost tracking checklist + vendor invoices<br>
+                    <strong>Rent:</strong> $8,300/month<br>
+                    <strong>Alley Lease:</strong> $589/month<br>
+                    <strong>Utilities (PGE, Gas, Water, Internet):</strong> ~$2,850/month<br>
+                    <strong>Services:</strong> $1,569/month (linen, ice, dishwasher, Everon, NuCo)<br>
+                    <strong>Insurance, Licenses, Permits:</strong> ~$1,200/month<br>
+                    <strong>Workers Comp:</strong> $1,154/month
+                </div>
+                
+                <div class="assumption-item">
+                    <div class="assumption-label">5. Variable Costs</div>
+                    <strong>COGS (Food & Beverage):</strong> 33.2% of sales (actual from November invoices)<br>
+                    <strong>Credit Card Processing:</strong> 3% of sales<br>
+                    <strong>Delivery Platform Fees:</strong> 5% of sales (estimated 20% of orders at 25% commission)<br>
+                    <strong>Maintenance & Repairs:</strong> 1.5% of sales
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Key Assumptions & Calculation Methodology</div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Assumption</th>
+                            <th>Value</th>
+                            <th>Rationale</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Employer Tax Rate</td>
+                            <td class="mono">30%</td>
+                            <td>Covers FICA, Medicare, FUTA, SUTA, workers comp</td>
+                        </tr>
+                        <tr>
+                            <td>Weeks per Month</td>
+                            <td class="mono">4.33</td>
+                            <td>Standard annual calculation (52 weeks ÷ 12 months)</td>
+                        </tr>
+                        <tr>
+                            <td>Target Labor % (Industry)</td>
+                            <td class="mono">30%</td>
+                            <td>Industry standard for quick-service/casual dining</td>
+                        </tr>
+                        <tr style="background: var(--warning-soft);">
+                            <td>Actual Food Cost % (November)</td>
+                            <td class="mono color-warning">33.2%</td>
+                            <td>Actual invoices from all vendors totaling $20,977.30</td>
+                        </tr>
+                        <tr>
+                            <td>Target COGS %</td>
+                            <td class="mono">30%</td>
+                            <td>Industry standard for pizza restaurants</td>
+                        </tr>
+                        <tr>
+                            <td>Security Hours (Required)</td>
+                            <td class="mono">16 hrs/week</td>
+                            <td>8 hours Fri + 8 hours Sat (midnight-4am)</td>
+                        </tr>
+                        <tr>
+                            <td>GM Salary</td>
+                            <td class="mono">$50,000/year</td>
+                            <td>$4,167/month (confirmed via ownership)</td>
+                        </tr>
+                        <tr>
+                            <td>Core Team Rates</td>
+                            <td class="mono">$22-25/hr</td>
+                            <td>Oscar: $22/hr, Mikey: $25/hr (confirmed payroll)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Actual Payroll Breakdown (Nov 24-30, 2025)</div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Position</th>
+                            <th class="text-right">Rate</th>
+                            <th class="text-right">Hours</th>
+                            <th class="text-right">Weekly Pay</th>
+                            <th class="text-right">Monthly</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Andrew Stewart</td>
+                            <td>General Manager</td>
+                            <td class="text-right mono">Salary</td>
+                            <td class="text-right mono">-</td>
+                            <td class="text-right mono">$962</td>
+                            <td class="text-right mono">$4,167</td>
+                        </tr>
+                        <tr style="background: var(--accent-soft);">
+                            <td>Oscar Sparbel</td>
+                            <td>Lead</td>
+                            <td class="text-right mono">$22.00</td>
+                            <td class="text-right mono">40.6</td>
+                            <td class="text-right mono">$899</td>
+                            <td class="text-right mono">$3,893</td>
+                        </tr>
+                        <tr style="background: var(--accent-soft);">
+                            <td>Mikey Williams</td>
+                            <td>Lead</td>
+                            <td class="text-right mono">$25.00</td>
+                            <td class="text-right mono">36.3</td>
+                            <td class="text-right mono">$909</td>
+                            <td class="text-right mono">$3,934</td>
+                        </tr>
+                        <tr>
+                            <td>David Jones</td>
+                            <td>Cook</td>
+                            <td class="text-right mono">$18.50</td>
+                            <td class="text-right mono">41.5</td>
+                            <td class="text-right mono">$782</td>
+                            <td class="text-right mono">$3,386</td>
+                        </tr>
+                        <tr>
+                            <td>Samuel Gander</td>
+                            <td>Prep</td>
+                            <td class="text-right mono">$18.00</td>
+                            <td class="text-right mono">33.7</td>
+                            <td class="text-right mono">$607</td>
+                            <td class="text-right mono">$2,627</td>
+                        </tr>
+                        <tr>
+                            <td>Milo Blue</td>
+                            <td>Lead</td>
+                            <td class="text-right mono">$21.00</td>
+                            <td class="text-right mono">27.4</td>
+                            <td class="text-right mono">$575</td>
+                            <td class="text-right mono">$2,489</td>
+                        </tr>
+                        <tr>
+                            <td>Dylan Brookshire</td>
+                            <td>Cook</td>
+                            <td class="text-right mono">$18.50</td>
+                            <td class="text-right mono">34.1</td>
+                            <td class="text-right mono">$630</td>
+                            <td class="text-right mono">$2,729</td>
+                        </tr>
+                        <tr>
+                            <td>Aaron Warnock</td>
+                            <td>FOH</td>
+                            <td class="text-right mono">$17.00</td>
+                            <td class="text-right mono">35.5</td>
+                            <td class="text-right mono">$603</td>
+                            <td class="text-right mono">$2,609</td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" class="text-center color-dim" style="padding: 0.5rem;">... +11 additional employees ...</td>
+                        </tr>
+                        <tr class="totals-row">
+                            <td colspan="3">Total (19 employees)</td>
+                            <td class="text-right mono">548</td>
+                            <td class="text-right mono">$8,553</td>
+                            <td class="text-right mono">$48,148</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td colspan="5">Add: Employer Taxes (30%)</td>
+                            <td class="text-right mono">$4,167</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td colspan="5"><strong>Total Monthly Labor Cost</strong></td>
+                            <td class="text-right mono"><strong>$52,315</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Industry Benchmarks Used</div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th class="text-right">Target %</th>
+                            <th>Industry Standard Range</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Cost of Goods Sold (COGS)</td>
+                            <td class="text-right mono">30%</td>
+                            <td>28-32% for pizza restaurants</td>
+                        </tr>
+                        <tr>
+                            <td>Labor Cost</td>
+                            <td class="text-right mono">30%</td>
+                            <td>25-32% for quick-service/casual</td>
+                        </tr>
+                        <tr>
+                            <td>Occupancy (Rent, Utilities)</td>
+                            <td class="text-right mono">10%</td>
+                            <td>8-12% typical</td>
+                        </tr>
+                        <tr>
+                            <td>Operating Expenses</td>
+                            <td class="text-right mono">20%</td>
+                            <td>15-25% depending on service model</td>
+                        </tr>
+                        <tr class="totals-row">
+                            <td>Target Operating Margin</td>
+                            <td class="text-right mono">10%</td>
+                            <td>8-15% healthy range</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="methodology-box">
+                    <strong>Sources:</strong> National Restaurant Association, Toast Restaurant Success Report 2024, industry analysis for late-night/quick-service pizza operations in urban markets.
+                </div>
+            </div>
+        </div>
+        
+        <!-- SCENARIO 1: SURVIVAL MODE -->
+        <div id="scenario1" class="tab-content">
+            <div class="alert alert-warning">
+                <div class="alert-icon">⚠️</div>
+                <div>
+                    <strong>Scenario 1: Survival Mode - 43% Labor</strong><br>
+                    This represents the absolute minimum to keep the business operational while cutting labor nearly in half. Still unprofitable, but stops catastrophic bleeding. Requires keeping core team plus skeleton crew.
+                </div>
+            </div>
+            
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Monthly Sales</div>
+                    <div class="metric-value">$63,099</div>
+                    <div class="metric-detail">No change from current</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Labor Budget</div>
+                    <div class="metric-value color-warning">$27,133</div>
+                    <div class="metric-detail">43% of sales</div>
+                    <div class="metric-change negative">-$25,182 from current</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Monthly Hours</div>
+                    <div class="metric-value">1,259</div>
+                    <div class="metric-detail">291 hours/week</div>
+                    <div class="metric-change negative">-1,115 hours/month</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Monthly P&L</div>
+                    <div class="metric-value color-accent">-$7,959</div>
+                    <div class="metric-detail">Still unprofitable</div>
+                    <div class="metric-change positive">+$25,210 improvement</div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Labor Budget Allocation</div>
+                
+                <div class="key-insight">
+                    <strong>Constraint:</strong> Core team (GM + Oscar + Mikey) = $11,994/month. Security = $1,678/month. This leaves only $13,461/month for all other staff = 156 hours/week.
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th class="text-right">Monthly Cost</th>
+                            <th class="text-right">Weekly Hours</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>GM (Andrew) - Salary</td>
+                            <td class="text-right mono">$4,167</td>
+                            <td class="text-right mono">-</td>
+                            <td>Non-negotiable, must work shifts</td>
+                        </tr>
+                        <tr>
+                            <td>Lead: Oscar ($22/hr)</td>
+                            <td class="text-right mono">$4,162</td>
+                            <td class="text-right mono">43.5</td>
+                            <td>Key operational lead</td>
+                        </tr>
+                        <tr>
+                            <td>Lead: Mikey ($25/hr)</td>
+                            <td class="text-right mono">$3,665</td>
+                            <td class="text-right mono">33.7</td>
+                            <td>Recipe dev, ordering, prep management</td>
+                        </tr>
+                        <tr style="background: var(--warning-soft);">
+                            <td>Security (16 hrs/week)</td>
+                            <td class="text-right mono">$1,678</td>
+                            <td class="text-right mono">16.0</td>
+                            <td>Non-negotiable Fri/Sat nights</td>
+                        </tr>
+                        <tr>
+                            <td>Remaining Line Staff Budget</td>
+                            <td class="text-right mono">$13,461</td>
+                            <td class="text-right mono">156</td>
+                            <td>All cooks, FOH, prep for entire month</td>
+                        </tr>
+                        <tr class="totals-row">
+                            <td>Total Labor Budget</td>
+                            <td class="text-right mono">$27,133</td>
+                            <td class="text-right mono">291</td>
+                            <td>43% of sales</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Skeleton Crew Schedule - Weekdays (Sun-Thu)</div>
+                <div class="schedule-day">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Staffing</th>
+                                <th class="text-right">Hours/Day</th>
+                                <th class="text-right">× 5 Days</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="mono">11am-5pm</td>
+                                <td>1 Cook + 1 FOH (GM or Oscar on line)</td>
+                                <td class="text-right mono">12</td>
+                                <td class="text-right mono">60</td>
+                            </tr>
+                            <tr>
+                                <td class="mono">5pm-10pm</td>
+                                <td>2 Kitchen (Oscar/Mikey lead) + 1 FOH</td>
+                                <td class="text-right mono">15</td>
+                                <td class="text-right mono">75</td>
+                            </tr>
+                            <tr>
+                                <td class="mono">10pm-2am</td>
+                                <td>1 Cook + 1 FOH</td>
+                                <td class="text-right mono">8</td>
+                                <td class="text-right mono">40</td>
+                            </tr>
+                            <tr class="totals-row">
+                                <td colspan="2">Weekday Total</td>
+                                <td class="text-right mono">35</td>
+                                <td class="text-right mono">175</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Weekend Schedule (Fri-Sat)</div>
+                <div class="schedule-day">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Staffing</th>
+                                <th class="text-right">Hours/Day</th>
+                                <th class="text-right">× 2 Days</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="mono">11am-5pm</td>
+                                <td>1 Prep (Mikey) + 1 Cook</td>
+                                <td class="text-right mono">12</td>
+                                <td class="text-right mono">24</td>
+                            </tr>
+                            <tr>
+                                <td class="mono">5pm-midnight</td>
+                                <td>2 Kitchen + 2 FOH</td>
+                                <td class="text-right mono">28</td>
+                                <td class="text-right mono">56</td>
+                            </tr>
+                            <tr>
+                                <td class="mono">Midnight-4am</td>
+                                <td>1 Cook + 1 FOH + Security</td>
+                                <td class="text-right mono">12</td>
+                                <td class="text-right mono">24</td>
+                            </tr>
+                            <tr class="totals-row">
+                                <td colspan="2">Weekend Total</td>
+                                <td class="text-right mono">52</td>
+                                <td class="text-right mono">104</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="methodology-box" style="margin-top: 1rem;">
+                    <strong>Total Weekly Hours:</strong> 175 (weekdays) + 104 (weekends) = 279 hours + 12 hours management flex = 291 hours/week
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Staff Reduction Required</div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Position</th>
+                            <th class="text-center">Current</th>
+                            <th class="text-center">Scenario 1</th>
+                            <th class="text-center">Change</th>
+                            <th>Action Required</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>GM</td>
+                            <td class="text-center">1</td>
+                            <td class="text-center">1</td>
+                            <td class="text-center">-</td>
+                            <td>Retain, must work line shifts</td>
+                        </tr>
+                        <tr>
+                            <td>Leads ($21-25/hr)</td>
+                            <td class="text-center">5</td>
+                            <td class="text-center">2</td>
+                            <td class="text-center color-accent">-3</td>
+                            <td>Keep Oscar + Mikey only</td>
+                        </tr>
+                        <tr>
+                            <td>Cooks</td>
+                            <td class="text-center">4</td>
+                            <td class="text-center">2</td>
+                            <td class="text-center color-accent">-2</td>
+                            <td>Keep 2 strongest cross-trained</td>
+                        </tr>
+                        <tr>
+                            <td>FOH</td>
+                            <td class="text-center">6</td>
+                            <td class="text-center">3</td>
+                            <td class="text-center color-accent">-3</td>
+                            <td>Keep most reliable/fast</td>
+                        </tr>
+                        <tr>
+                            <td>Prep</td>
+                            <td class="text-center">2</td>
+                            <td class="text-center">1</td>
+                            <td class="text-center color-accent">-1</td>
+                            <td>Mikey handles most prep</td>
+                        </tr>
+                        <tr>
+                            <td>Security</td>
+                            <td class="text-center">1</td>
+                            <td class="text-center">1</td>
+                            <td class="text-center">-</td>
+                            <td>Retain (non-negotiable)</td>
+                        </tr>
+                        <tr class="totals-row">
+                            <td>Total Staff</td>
+                            <td class="text-center">18</td>
+                            <td class="text-center">10</td>
+                            <td class="text-center color-accent">-8</td>
+                            <td>44% workforce reduction</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Financial Outcome</div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Line Item</th>
+                            <th class="text-right">Amount</th>
+                            <th class="text-right">% Sales</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Monthly Sales</td>
+                            <td class="text-right mono">$63,099</td>
+                            <td class="text-right mono">100%</td>
+                        </tr>
+                        <tr>
+                            <td>Labor</td>
+                            <td class="text-right mono">$27,133</td>
+                            <td class="text-right mono">43%</td>
+                        </tr>
+                        <tr style="background: var(--warning-soft);">
+                            <td>COGS (33.2% - ACTUAL)</td>
+                            <td class="text-right mono color-warning">$20,949</td>
+                            <td class="text-right mono color-warning">33.2%</td>
+                        </tr>
+                        <tr>
+                            <td>Operating Expenses</td>
+                            <td class="text-right mono">$22,976</td>
+                            <td class="text-right mono">36%</td>
+                        </tr>
+                        <tr class="totals-row">
+                            <td>Total Costs</td>
+                            <td class="text-right mono">$71,058</td>
+                            <td class="text-right mono">113%</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td>Monthly Profit/(Loss)</td>
+                            <td class="text-right mono color-accent">($7,959)</td>
+                            <td class="text-right mono">-13%</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="key-insight">
+                    <strong>Assessment:</strong> This scenario stops catastrophic losses but remains unprofitable. It buys time to implement marketing and operational improvements. Requires intense cross-training and management working production shifts. High burnout risk.
+                </div>
+            </div>
+        </div>
+        
+        <!-- SCENARIO 2: RIGHT-SIZED -->
+        <div id="scenario2" class="tab-content">
+            <div class="alert alert-warning">
+                <div class="alert-icon">📊</div>
+                <div>
+                    <strong>Scenario 2: Right-Sized for Current Reality - 48% Labor</strong><br>
+                    This represents proper staffing for a $63K/month operation. Still above industry standard but accounts for late-night operations and security requirements. Allows for coverage, cross-training, and sustainable operations.
+                </div>
+            </div>
+            
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Monthly Sales</div>
+                    <div class="metric-value">$63,099</div>
+                    <div class="metric-detail">Current level maintained</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Labor Budget</div>
+                    <div class="metric-value color-warning">$30,288</div>
+                    <div class="metric-detail">48% of sales</div>
+                    <div class="metric-change negative">-$22,027 from current</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Monthly Hours</div>
+                    <div class="metric-value">1,405</div>
+                    <div class="metric-detail">325 hours/week</div>
+                    <div class="metric-change negative">-969 hours/month</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Monthly P&L</div>
+                    <div class="metric-value color-accent">-$11,114</div>
+                    <div class="metric-detail">Still unprofitable</div>
+                    <div class="metric-change positive">+$22,055 improvement</div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Why 48% Instead of 30%?</div>
+                
+                <div class="methodology-box">
+                    <strong>Reality Check:</strong> Industry standard 30% labor assumes:
+                    <ul style="margin: 0.5rem 0 0 1.5rem;">
+                        <li>Standard hours (no late-night premium)</li>
+                        <li>Higher sales volume for efficiency</li>
+                        <li>No security requirements</li>
+                        <li>Minimal management overhead</li>
+                    </ul>
+                    <br>
+                    Fast Times operates until 4am on weekends with mandatory security, generating 25%+ of revenue during expensive late-night hours. A 48% labor ratio represents proper staffing for this unique operating model at current volume.
+                </div>
+                
+                <table style="margin-top: 1rem;">
+                    <thead>
+                        <tr>
+                            <th>Component</th>
+                            <th class="text-right">Monthly Cost</th>
+                            <th class="text-right">% of Labor</th>
+                            <th>Justification</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Core Management Team</td>
+                            <td class="text-right mono">$11,994</td>
+                            <td class="text-right mono">40%</td>
+                            <td>GM + recipe dev/ordering + operations lead</td>
+                        </tr>
+                        <tr>
+                            <td>Security (Non-negotiable)</td>
+                            <td class="text-right mono">$1,678</td>
+                            <td class="text-right mono">6%</td>
+                            <td>16 hours/week Fri/Sat nights</td>
+                        </tr>
+                        <tr>
+                            <td>Line Staff Coverage</td>
+                            <td class="text-right mono">$16,616</td>
+                            <td class="text-right mono">55%</td>
+                            <td>235 hrs/week operational coverage</td>
+                        </tr>
+                        <tr class="totals-row">
+                            <td>Total Labor</td>
+                            <td class="text-right mono">$30,288</td>
+                            <td class="text-right mono">100%</td>
+                            <td>48% of sales</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Sustainable Staffing Model</div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Position</th>
+                            <th class="text-center">Count</th>
+                            <th class="text-right">Avg Rate</th>
+                            <th class="text-right">Weekly Hours</th>
+                            <th class="text-right">Monthly Cost</th>
+                            <th>Role</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>General Manager</td>
+                            <td class="text-center">1</td>
+                            <td class="text-right mono">Salary</td>
+                            <td class="text-right mono">45</td>
+                            <td class="text-right mono">$4,167</td>
+                            <td>Operations oversight + shift coverage</td>
+                        </tr>
+                        <tr style="background: var(--accent-soft);">
+                            <td>Lead: Oscar</td>
+                            <td class="text-center">1</td>
+                            <td class="text-right mono">$22/hr</td>
+                            <td class="text-right mono">45</td>
+                            <td class="text-right mono">$4,293</td>
+                            <td>Kitchen lead, training, quality control</td>
+                        </tr>
+                        <tr style="background: var(--accent-soft);">
+                            <td>Lead: Mikey</td>
+                            <td class="text-center">1</td>
+                            <td class="text-right mono">$25/hr</td>
+                            <td class="text-right mono">40</td>
+                            <td class="text-right mono">$4,330</td>
+                            <td>Recipe dev, ordering, food cost, prep</td>
+                        </tr>
+                        <tr>
+                            <td>Additional Lead</td>
+                            <td class="text-center">1</td>
+                            <td class="text-right mono">$21/hr</td>
+                            <td class="text-right mono">35</td>
+                            <td class="text-right mono">$3,189</td>
+                            <td>Weekend coverage, training backup</td>
+                        </tr>
+                        <tr>
+                            <td>Line Cooks</td>
+                            <td class="text-center">3</td>
+                            <td class="text-right mono">$18.50/hr</td>
+                            <td class="text-right mono">30 ea</td>
+                            <td class="text-right mono">$7,206</td>
+                            <td>Production, cross-trained</td>
+                        </tr>
+                        <tr>
+                            <td>FOH Staff</td>
+                            <td class="text-center">4</td>
+                            <td class="text-right mono">$17.50/hr</td>
+                            <td class="text-right mono">25 ea</td>
+                            <td class="text-right mono">$7,578</td>
+                            <td>Service, cashier, phone orders</td>
+                        </tr>
+                        <tr>
+                            <td>Prep</td>
+                            <td class="text-center">1</td>
+                            <td class="text-right mono">$18/hr</td>
+                            <td class="text-right mono">30</td>
+                            <td class="text-right mono">$2,347</td>
+                            <td>Prep support, cross-train to line</td>
+                        </tr>
+                        <tr style="background: var(--warning-soft);">
+                            <td>Security</td>
+                            <td class="text-center">1</td>
+                            <td class="text-right mono">$25/hr</td>
+                            <td class="text-right mono">16</td>
+                            <td class="text-right mono">$1,678</td>
+                            <td>Weekend late-night security</td>
+                        </tr>
+                        <tr class="totals-row">
+                            <td>Total</td>
+                            <td class="text-center">13</td>
+                            <td class="text-right mono">$20.30</td>
+                            <td class="text-right mono">325</td>
+                            <td class="text-right mono">$30,288</td>
+                            <td>Right-sized team</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="key-insight">
+                    <strong>Key Changes from Current:</strong> Reduce from 18 to 13 employees (-5 people). Maintain core team + security. Add one additional lead for coverage. Streamline cooks and FOH to essential cross-trained staff.
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Sample Weekly Schedule - Weekdays</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Staffing</th>
+                            <th class="text-right">Daily Hrs</th>
+                            <th class="text-right">× 5 Days</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="mono">11am-5pm</td>
+                            <td>1 Lead + 1 Cook + 1 FOH</td>
+                            <td class="text-right mono">18</td>
+                            <td class="text-right mono">90</td>
+                        </tr>
+                        <tr>
+                            <td class="mono">5pm-10pm</td>
+                            <td>1 Lead + 2 Cooks + 1-2 FOH</td>
+                            <td class="text-right mono">22.5</td>
+                            <td class="text-right mono">112.5</td>
+                        </tr>
+                        <tr>
+                            <td class="mono">10pm-2am</td>
+                            <td>1 Cook + 1 FOH</td>
+                            <td class="text-right mono">8</td>
+                            <td class="text-right mono">40</td>
+                        </tr>
+                        <tr class="totals-row">
+                            <td colspan="2">Weekday Total</td>
+                            <td class="text-right mono">48.5</td>
+                            <td class="text-right mono">242.5</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Sample Weekly Schedule - Weekend</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Staffing</th>
+                            <th class="text-right">Daily Hrs</th>
+                            <th class="text-right">× 2 Days</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="mono">11am-5pm</td>
+                            <td>Mikey (prep) + 1 Cook + 1 FOH</td>
+                            <td class="text-right mono">18</td>
+                            <td class="text-right mono">36</td>
+                        </tr>
+                        <tr>
+                            <td class="mono">5pm-midnight</td>
+                            <td>1 Lead + 2 Cooks + 2 FOH</td>
+                            <td class="text-right mono">35</td>
+                            <td class="text-right mono">70</td>
+                        </tr>
+                        <tr>
+                            <td class="mono">Midnight-4am</td>
+                            <td>1 Cook + 1 FOH + Security</td>
+                            <td class="text-right mono">12</td>
+                            <td class="text-right mono">24</td>
+                        </tr>
+                        <tr class="totals-row">
+                            <td colspan="2">Weekend Total</td>
+                            <td class="text-right mono">65</td>
+                            <td class="text-right mono">130</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="methodology-box" style="margin-top: 1rem;">
+                    <strong>Total:</strong> 242.5 (weekday) + 130 (weekend) = 372.5 hours scheduled. Actual 325 hours = flexibility for call-outs, training, schedule optimization.
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Financial Outcome</div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Line Item</th>
+                            <th class="text-right">Amount</th>
+                            <th class="text-right">% Sales</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Monthly Sales</td>
+                            <td class="text-right mono">$63,099</td>
+                            <td class="text-right mono">100%</td>
+                        </tr>
+                        <tr>
+                            <td>Labor (Right-sized)</td>
+                            <td class="text-right mono">$30,288</td>
+                            <td class="text-right mono">48%</td>
+                        </tr>
+                        <tr style="background: var(--warning-soft);">
+                            <td>COGS (33.2% - ACTUAL)</td>
+                            <td class="text-right mono color-warning">$20,949</td>
+                            <td class="text-right mono color-warning">33.2%</td>
+                        </tr>
+                        <tr>
+                            <td>Operating Expenses</td>
+                            <td class="text-right mono">$22,976</td>
+                            <td class="text-right mono">36%</td>
+                        </tr>
+                        <tr class="totals-row">
+                            <td>Total Costs</td>
+                            <td class="text-right mono">$74,213</td>
+                            <td class="text-right mono">118%</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td>Monthly Profit/(Loss)</td>
+                            <td class="text-right mono color-accent">($11,114)</td>
+                            <td class="text-right mono">-18%</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="key-insight">
+                    <strong>Assessment:</strong> This is proper staffing for $63K/month sales but still unprofitable due to low sales volume. This proves the problem is not just overstaffing - sales must increase to achieve profitability. Current staffing of 18 people would be appropriate for $130-174K/month in sales. However, this 13-person model provides sustainable operations and better customer experience than skeleton crew approach.
+                </div>
+            </div>
+        </div>
+        
+        <!-- SCENARIO 3: GROWTH PATH -->
+        <div id="scenario3" class="tab-content">
+            <div class="alert alert-success">
+                <div class="alert-icon">📈</div>
+                <div>
+                    <strong>Scenario 3: Growth Path to Profitability</strong><br>
+                    With 25% sales growth and optimized 35% labor, Fast Times reaches near-breakeven operations. As volume increases, economies of scale will naturally improve food cost from 33.2% toward 30%, pushing into profitability. This is the sustainable path forward.
+                </div>
+            </div>
+            
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Target Monthly Sales</div>
+                    <div class="metric-value color-success">$78,874</div>
+                    <div class="metric-detail">+25% growth</div>
+                    <div class="metric-change positive">+$15,775/month</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Labor Budget</div>
+                    <div class="metric-value color-success">$27,606</div>
+                    <div class="metric-detail">35% of sales</div>
+                    <div class="metric-change positive">Below industry standard!</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Monthly Hours</div>
+                    <div class="metric-value">1,280</div>
+                    <div class="metric-detail">296 hours/week</div>
+                    <div class="metric-change positive">Efficient staffing</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Monthly Result</div>
+                    <div class="metric-value color-success">~Break Even</div>
+                    <div class="metric-detail">With scale → profitable</div>
+                    <div class="metric-change positive">+$33,041 improvement!</div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">How to Achieve 25% Sales Growth</div>
+                
+                <div class="methodology-box">
+                    <strong>Current State:</strong> $63,099/month = ~$14,570/week = ~$2,081/day<br>
+                    <strong>Target State:</strong> $78,874/month = ~$18,213/week = ~$2,602/day<br>
+                    <strong>Increase Needed:</strong> +$521/day average
+                </div>
+                
+                <table style="margin-top: 1rem;">
+                    <thead>
+                        <tr>
+                            <th>Growth Initiative</th>
+                            <th class="text-right">Daily Impact</th>
+                            <th class="text-right">Monthly Impact</th>
+                            <th>Timeline</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>1. Late-Night Marketing Push</strong><br>Target post-bar crowd, late-night workers</td>
+                            <td class="text-right mono">+$200</td>
+                            <td class="text-right mono">+$6,000</td>
+                            <td>Month 1-2</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2. Delivery Optimization</strong><br>DoorDash/UberEats promotions, better photos</td>
+                            <td class="text-right mono">+$150</td>
+                            <td class="text-right mono">+$4,500</td>
+                            <td>Month 1-3</td>
+                        </tr>
+                        <tr>
+                            <td><strong>3. Happy Hour / Deals</strong><br>5-7pm specials to build dinner traffic</td>
+                            <td class="text-right mono">+$100</td>
+                            <td class="text-right mono">+$3,000</td>
+                            <td>Month 2-4</td>
+                        </tr>
+                        <tr>
+                            <td><strong>4. Catering / Large Orders</strong><br>Target offices, events, parties</td>
+                            <td class="text-right mono">+$50</td>
+                            <td class="text-right mono">+$1,500</td>
+                            <td>Month 3-6</td>
+                        </tr>
+                        <tr>
+                            <td><strong>5. Speed & Quality Improvements</strong><br>Faster service = more tables turned</td>
+                            <td class="text-right mono">+$21</td>
+                            <td class="text-right mono">+$775</td>
+                            <td>Ongoing</td>
+                        </tr>
+                        <tr class="totals-row">
+                            <td>Total Growth Potential</td>
+                            <td class="text-right mono">+$521</td>
+                            <td class="text-right mono">+$15,775</td>
+                            <td>6-month horizon</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Optimized Staffing at Higher Volume</div>
+                
+                <div class="key-insight">
+                    <strong>Key Principle:</strong> At higher volumes, labor efficiency improves. Same core team can handle more orders with strategic additions during peak times only.
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Position</th>
+                            <th class="text-center">Count</th>
+                            <th class="text-right">Weekly Hours</th>
+                            <th class="text-right">Monthly Cost</th>
+                            <th>Role Adjustment</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>GM (Andrew)</td>
+                            <td class="text-center">1</td>
+                            <td class="text-right mono">45</td>
+                            <td class="text-right mono">$4,167</td>
+                            <td>Less line work, more management</td>
+                        </tr>
+                        <tr style="background: var(--accent-soft);">
+                            <td>Oscar (Lead)</td>
+                            <td class="text-center">1</td>
+                            <td class="text-right mono">43</td>
+                            <td class="text-right mono">$4,105</td>
+                            <td>Kitchen lead, peak times</td>
+                        </tr>
+                        <tr style="background: var(--accent-soft);">
+                            <td>Mikey (Lead)</td>
+                            <td class="text-center">1</td>
+                            <td class="text-right mono">38</td>
+                            <td class="text-right mono">$4,121</td>
+                            <td>Prep, recipe, ordering + peak shifts</td>
+                        </tr>
+                        <tr>
+                            <td>Additional Lead</td>
+                            <td class="text-center">1</td>
+                            <td class="text-right mono">35</td>
+                            <td class="text-right mono">$3,189</td>
+                            <td>Weekend coverage, training</td>
+                        </tr>
+                        <tr>
+                            <td>Cooks</td>
+                            <td class="text-center">2</td>
+                            <td class="text-right mono">32 ea</td>
+                            <td class="text-right mono">$5,127</td>
+                            <td>Core production team</td>
+                        </tr>
+                        <tr>
+                            <td>FOH</td>
+                            <td class="text-center">3</td>
+                            <td class="text-right mono">28 ea</td>
+                            <td class="text-right mono">$6,364</td>
+                            <td>Service, phones, cashier rotation</td>
+                        </tr>
+                        <tr>
+                            <td>Peak-Only Staff</td>
+                            <td class="text-center">2</td>
+                            <td class="text-right mono">12 ea</td>
+                            <td class="text-right mono">$2,080</td>
+                            <td>Fri/Sat dinner rush only</td>
+                        </tr>
+                        <tr style="background: var(--warning-soft);">
+                            <td>Security</td>
+                            <td class="text-center">1</td>
+                            <td class="text-right mono">16</td>
+                            <td class="text-right mono">$1,678</td>
+                            <td>Weekend late-night (unchanged)</td>
+                        </tr>
+                        <tr class="totals-row">
+                            <td>Total</td>
+                            <td class="text-center">12</td>
+                            <td class="text-right mono">296</td>
+                            <td class="text-right mono">$27,606</td>
+                            <td>35% of $78,874</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">6-Month Growth Roadmap</div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th class="text-right">Target Sales</th>
+                            <th class="text-right">Labor %</th>
+                            <th class="text-right">Monthly P&L</th>
+                            <th>Key Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Month 1</td>
+                            <td class="text-right mono">$67,000</td>
+                            <td class="text-right mono">42%</td>
+                            <td class="text-right mono color-accent">($4,200)</td>
+                            <td>Cut to 13 staff, launch late-night marketing</td>
+                        </tr>
+                        <tr>
+                            <td>Month 2</td>
+                            <td class="text-right mono">$71,000</td>
+                            <td class="text-right mono">39%</td>
+                            <td class="text-right mono color-accent">($1,800)</td>
+                            <td>Delivery optimization, speed improvements</td>
+                        </tr>
+                        <tr>
+                            <td>Month 3</td>
+                            <td class="text-right mono">$74,000</td>
+                            <td class="text-right mono">37%</td>
+                            <td class="text-right mono color-warning">$200</td>
+                            <td>Happy hour launch, quality focus</td>
+                        </tr>
+                        <tr>
+                            <td>Month 4</td>
+                            <td class="text-right mono">$76,500</td>
+                            <td class="text-right mono">36%</td>
+                            <td class="text-right mono color-success">$2,100</td>
+                            <td>Catering push, weekend optimization</td>
+                        </tr>
+                        <tr>
+                            <td>Month 5</td>
+                            <td class="text-right mono">$77,800</td>
+                            <td class="text-right mono">35%</td>
+                            <td class="text-right mono color-success">$3,500</td>
+                            <td>Refine operations, scale what works</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td>Month 6</td>
+                            <td class="text-right mono">$78,874</td>
+                            <td class="text-right mono">35%</td>
+                            <td class="text-right mono color-success">$4,486</td>
+                            <td>Hit target, sustain & optimize</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="methodology-box" style="margin-top: 1rem;">
+                    <strong>Marketing Investment:</strong> $2,000-2,500/month for first 3 months (included in projections)<br>
+                    <strong>Focus Areas:</strong> Instagram/Facebook ads, delivery platform promotions, Google My Business optimization, late-night targeting
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Financial Outcome at Target</div>
+                
+                <div class="key-insight">
+                    <strong>Primary Achievement:</strong> With labor optimized to 35% and sales at $78,874/month, Fast Times reaches operational breakeven - a dramatic turnaround from -$33,169/month losses. Food cost will naturally improve with increased volume and operational maturity.
+                </div>
+                
+                <h3 style="margin: 1.5rem 0 1rem 0;">Current Food Cost (33.2%)</h3>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Line Item</th>
+                            <th class="text-right">Amount</th>
+                            <th class="text-right">% Sales</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Monthly Sales</td>
+                            <td class="text-right mono">$78,874</td>
+                            <td class="text-right mono">100%</td>
+                            <td>+25% from current</td>
+                        </tr>
+                        <tr>
+                            <td>Labor</td>
+                            <td class="text-right mono">$27,606</td>
+                            <td class="text-right mono">35%</td>
+                            <td>Optimized staffing</td>
+                        </tr>
+                        <tr>
+                            <td>COGS (33.2%)</td>
+                            <td class="text-right mono">$26,186</td>
+                            <td class="text-right mono">33.2%</td>
+                            <td>Early-stage, pre-scale</td>
+                        </tr>
+                        <tr>
+                            <td>Variable Costs</td>
+                            <td class="text-right mono">$6,310</td>
+                            <td class="text-right mono">8%</td>
+                            <td>Cards, delivery, etc.</td>
+                        </tr>
+                        <tr>
+                            <td>Fixed Costs</td>
+                            <td class="text-right mono">$18,900</td>
+                            <td class="text-right mono">24%</td>
+                            <td>Rent, utilities, services, etc.</td>
+                        </tr>
+                        <tr class="totals-row">
+                            <td>Total Costs</td>
+                            <td class="text-right mono">$79,002</td>
+                            <td class="text-right mono">100.2%</td>
+                            <td>Near breakeven</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td><strong>Monthly Result</strong></td>
+                            <td class="text-right mono color-success"><strong>($128)</strong></td>
+                            <td class="text-right mono"><strong>-0.2%</strong></td>
+                            <td><strong>Operational breakeven</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 style="margin: 2rem 0 1rem 0;">With Economies of Scale (30% Food Cost)</h3>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Line Item</th>
+                            <th class="text-right">Amount</th>
+                            <th class="text-right">% Sales</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Monthly Sales</td>
+                            <td class="text-right mono">$78,874</td>
+                            <td class="text-right mono">100%</td>
+                            <td>Same volume</td>
+                        </tr>
+                        <tr>
+                            <td>Labor</td>
+                            <td class="text-right mono">$27,606</td>
+                            <td class="text-right mono">35%</td>
+                            <td>Optimized staffing</td>
+                        </tr>
+                        <tr style="background: var(--success-soft);">
+                            <td>COGS (30% - with scale)</td>
+                            <td class="text-right mono color-success">$23,662</td>
+                            <td class="text-right mono color-success">30.0%</td>
+                            <td>Natural improvement at volume</td>
+                        </tr>
+                        <tr>
+                            <td>Variable Costs</td>
+                            <td class="text-right mono">$6,310</td>
+                            <td class="text-right mono">8%</td>
+                            <td>Cards, delivery, etc.</td>
+                        </tr>
+                        <tr>
+                            <td>Fixed Costs</td>
+                            <td class="text-right mono">$18,900</td>
+                            <td class="text-right mono">24%</td>
+                            <td>Rent, utilities, services, etc.</td>
+                        </tr>
+                        <tr class="totals-row">
+                            <td>Total Costs</td>
+                            <td class="text-right mono">$76,478</td>
+                            <td class="text-right mono">97%</td>
+                            <td>Healthy cost structure</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td><strong>Monthly Profit</strong></td>
+                            <td class="text-right mono color-success"><strong>$2,396</strong></td>
+                            <td class="text-right mono color-success"><strong>3.0%</strong></td>
+                            <td><strong>$28,752 annual profit</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="methodology-box" style="margin-top: 1.5rem;">
+                    <strong>Path to Profitability:</strong> Primary focus is labor optimization (35%) and sales growth (+25%). Food cost improvement from 33.2% to 30% happens naturally through: better vendor pricing at volume, reduced waste percentage, improved kitchen efficiency, and operational maturity. This is not an emergency fix - it's a natural progression.
+                </div>
+                
+                <div class="key-insight">
+                    <strong>Assessment:</strong> Scenario 3 demonstrates that right-sizing labor (from 82.9% to 35%) and achieving modest sales growth (+25%) creates a sustainable, near-breakeven operation - a massive improvement from -$33K/month losses. Current staffing would require $174K/month to justify; this scenario achieves viability at $79K. As the restaurant matures and achieves scale, food costs naturally trend toward 30%, creating healthy profitability.
+                </div>
+            </div>
+        </div>
+        
+        <!-- COMPARISON TAB -->
+        <div id="comparison" class="tab-content">
+            <div class="section">
+                <div class="section-title">Scenario Comparison Matrix</div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th class="text-right">Current</th>
+                            <th class="text-right">Scenario 1<br>Survival</th>
+                            <th class="text-right">Scenario 2<br>Right-Sized</th>
+                            <th class="text-right">Scenario 3<br>Growth</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Monthly Sales</strong></td>
+                            <td class="text-right mono">$63,099</td>
+                            <td class="text-right mono">$63,099</td>
+                            <td class="text-right mono">$63,099</td>
+                            <td class="text-right mono color-success">$78,874</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Labor Cost</strong></td>
+                            <td class="text-right mono color-accent">$52,315</td>
+                            <td class="text-right mono">$27,133</td>
+                            <td class="text-right mono">$30,288</td>
+                            <td class="text-right mono color-success">$27,606</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Labor %</strong></td>
+                            <td class="text-right mono color-accent">82.9%</td>
+                            <td class="text-right mono">43%</td>
+                            <td class="text-right mono">48%</td>
+                            <td class="text-right mono color-success">35%</td>
+                        </tr>
+                        <tr style="background: var(--warning-soft);">
+                            <td><strong>Food Cost %</strong></td>
+                            <td class="text-right mono color-warning">33.2%</td>
+                            <td class="text-right mono color-warning">33.2%</td>
+                            <td class="text-right mono color-warning">33.2%</td>
+                            <td class="text-right mono color-warning">33.2%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Weekly Hours</strong></td>
+                            <td class="text-right mono">548</td>
+                            <td class="text-right mono">291</td>
+                            <td class="text-right mono">325</td>
+                            <td class="text-right mono">296</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total Staff</strong></td>
+                            <td class="text-right mono">18</td>
+                            <td class="text-right mono">10</td>
+                            <td class="text-right mono">13</td>
+                            <td class="text-right mono">12</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td><strong>Monthly P&L</strong></td>
+                            <td class="text-right mono color-accent">($33,169)</td>
+                            <td class="text-right mono color-accent">($7,959)</td>
+                            <td class="text-right mono color-accent">($11,114)</td>
+                            <td class="text-right mono color-success">~$0</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Annual Impact</strong></td>
+                            <td class="text-right mono color-accent">($398,028)</td>
+                            <td class="text-right mono color-accent">($95,508)</td>
+                            <td class="text-right mono color-accent">($133,368)</td>
+                            <td class="text-right mono color-success">~Break even</td>
+                        </tr>
+                        <tr style="background: var(--success-soft);">
+                            <td><strong>With Scale (30% Food Cost)</strong></td>
+                            <td class="text-right mono">-</td>
+                            <td class="text-right mono color-accent">($5,912)</td>
+                            <td class="text-right mono color-accent">($9,067)</td>
+                            <td class="text-right mono color-success">+$2,396/mo</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Qualitative Assessment</div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Factor</th>
+                            <th>Scenario 1<br>Survival</th>
+                            <th>Scenario 2<br>Right-Sized</th>
+                            <th>Scenario 3<br>Growth</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Operational Viability</strong></td>
+                            <td class="color-warning">Marginal - constant stress</td>
+                            <td class="color-success">Sustainable</td>
+                            <td class="color-success">Healthy</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Quality/Service Level</strong></td>
+                            <td class="color-accent">Degraded - skeleton crew</td>
+                            <td class="color-success">Good - proper coverage</td>
+                            <td class="color-success">Excellent - optimized</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Staff Burnout Risk</strong></td>
+                            <td class="color-accent">Extreme - core team exhausted</td>
+                            <td class="color-warning">Moderate - manageable</td>
+                            <td class="color-success">Low - adequate support</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Growth Potential</strong></td>
+                            <td class="color-accent">Limited - survival mode</td>
+                            <td class="color-warning">Possible but constrained</td>
+                            <td class="color-success">Strong - momentum builds</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Implementation Risk</strong></td>
+                            <td class="color-warning">High - dramatic cuts</td>
+                            <td class="color-warning">Moderate - significant change</td>
+                            <td class="color-warning">Moderate - requires execution</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Timeline to Execute</strong></td>
+                            <td class="color-success">Immediate (2-4 weeks)</td>
+                            <td class="color-success">1-2 months</td>
+                            <td class="color-warning">6 months</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td><strong>Recommendation</strong></td>
+                            <td class="color-warning">Emergency fallback only</td>
+                            <td class="color-warning">Interim step</td>
+                            <td class="color-success"><strong>PRIMARY PATH</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Decision Framework for Ownership</div>
+                
+                <div class="methodology-box">
+                    <h3 style="margin-bottom: 0.5rem;">Note on Food Cost:</h3>
+                    Current 33.2% food cost is factored into all scenarios. This should naturally improve to 30-31% as sales volume increases and operational efficiency improves. Scenarios below focus primarily on labor right-sizing, which is the immediate controllable factor.
+                </div>
+                
+                <div class="methodology-box" style="margin-top: 1rem;">
+                    <h3 style="margin-bottom: 0.5rem;">Option A: Conservative Approach</h3>
+                    <strong>Month 1-2:</strong> Implement Scenario 2 (Right-Sized, 48% labor)<br>
+                    <strong>Month 3-6:</strong> Execute growth plan to reach Scenario 3<br>
+                    <strong>Pros:</strong> Less staff disruption, maintains service quality while fixing fundamentals<br>
+                    <strong>Cons:</strong> Loses $11K/month for 2 months = $22K additional loss<br>
+                    <strong>Total 6-month P&L:</strong> -$22K (months 1-2) + break-even (months 3-4) + modest profit (months 5-6) = <strong>-$15K net</strong>
+                </div>
+                
+                <div class="methodology-box" style="margin-top: 1rem;">
+                    <h3 style="margin-bottom: 0.5rem;">Option B: Aggressive Approach</h3>
+                    <strong>Month 1:</strong> Implement Scenario 1 (Survival, 43% labor) immediately<br>
+                    <strong>Month 2-6:</strong> Execute growth plan while maintaining lean operations<br>
+                    <strong>Pros:</strong> Stops bleeding fastest, forces discipline<br>
+                    <strong>Cons:</strong> Extreme burnout risk, quality suffers during transition<br>
+                    <strong>Total 6-month P&L:</strong> -$16K (month 1) + gradual improvement = <strong>-$8K net</strong> if growth succeeds
+                </div>
+                
+                <div class="methodology-box" style="margin-top: 1rem; background: var(--success-soft); border-color: var(--success);">
+                    <h3 style="margin-bottom: 0.5rem;">Recommended: Hybrid Approach</h3>
+                    <strong>Week 1-2:</strong> Cut to 13-14 staff (between Scenarios 1 & 2)<br>
+                    <strong>Month 1-3:</strong> Operate at 45% labor while launching marketing<br>
+                    <strong>Month 3-6:</strong> Execute sales growth + optimize to 35% labor<br>
+                    <strong>Pros:</strong> Addresses labor immediately while building revenue, sustainable execution<br>
+                    <strong>Cons:</strong> Requires focus and discipline on multiple fronts<br>
+                    <strong>Total 6-month P&L:</strong> -$9K (month 1) + -$4K (month 2) + break-even (month 3-4) + modest growth (5-6) = <strong>-$10K net</strong>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">Key Decisions Required This Week</div>
+                
+                <div class="key-insight">
+                    <strong>1. Staff Reductions:</strong> Who stays, who goes? Must happen immediately regardless of scenario chosen. Core team (GM, Oscar, Mikey) + security are locked in. Need to cut from 18 to 10-13 employees.
+                </div>
+                
+                <div class="key-insight">
+                    <strong>2. Food Cost Monitoring:</strong> Current 33.2% is expected for first full month without economies of scale. As sales increase, Mikey should track this monthly and implement portion standards to target 30-31% as volume grows. Not an emergency, but worth tracking as part of operational maturity.
+                </div>
+                
+                <div class="key-insight">
+                    <strong>3. Marketing Budget:</strong> Commit $2,000-2,500/month for 3-6 months to drive growth. Without sales growth, even with fixed labor costs, the restaurant remains marginally profitable at best.
+                </div>
+                
+                <div class="key-insight">
+                    <strong>4. Hours Decision:</strong> Keep current hours (11am-2am/4am) or cut back? Late-night is 25%+ of revenue but requires security costs. This decision affects staffing models significantly.
+                </div>
+                
+                <div class="key-insight">
+                    <strong>5. Timeline & Cash Runway:</strong> How many months of losses can the business sustain? If 6+ months → take measured approach. If 2-3 months → emergency survival mode required immediately.
+                </div>
+                
+                <div class="key-insight">
+                    <strong>6. Management Structure:</strong> Can Andrew continue as salaried GM ($4,167/month) or transition to hourly? At current sales levels, this represents 6.6% of revenue for one person. Consider whether this is sustainable or if GM role needs restructuring.
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all nav tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked nav tab
+            event.target.classList.add('active');
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
