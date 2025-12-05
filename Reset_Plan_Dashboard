@@ -1,0 +1,2030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fast Times PDX - Reset & Restructure Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #2c3e50;
+            --secondary: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --info: #3498db;
+            --danger: #e74c3c;
+            --bg-light: #ecf0f1;
+            --bg-dark: #34495e;
+            --text-dark: #2c3e50;
+            --text-light: #7f8c8d;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            color: var(--primary);
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header .subtitle {
+            color: var(--text-light);
+            font-size: 1.2em;
+        }
+        
+        .header .crisis-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-button {
+            background: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .tab-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        
+        .tab-button.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--info);
+        }
+        
+        .card h3 {
+            color: var(--primary);
+            margin: 20px 0 15px 0;
+            font-size: 1.3em;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        
+        .metric-card.success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+        
+        .metric-card.danger {
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+        }
+        
+        .metric-card.warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .metric-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .metric-detail {
+            font-size: 0.85em;
+            opacity: 0.8;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+        }
+        
+        th {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .highlight-row {
+            background: #fff3cd !important;
+            font-weight: 600;
+        }
+        
+        .success-row {
+            background: #d4edda !important;
+        }
+        
+        .danger-row {
+            background: #f8d7da !important;
+        }
+        
+        .text-right {
+            text-align: right;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .mono {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+        }
+        
+        .tag {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin: 2px;
+        }
+        
+        .tag-core {
+            background: #ffd700;
+            color: #000;
+        }
+        
+        .tag-keep {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .tag-cut {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .comparison-card {
+            padding: 20px;
+            border-radius: 10px;
+            border: 3px solid;
+        }
+        
+        .comparison-card.current {
+            border-color: var(--danger);
+            background: #fff5f5;
+        }
+        
+        .comparison-card.new {
+            border-color: var(--success);
+            background: #f0fff4;
+        }
+        
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+        
+        .timeline-item {
+            padding: 20px;
+            background: white;
+            border-left: 4px solid var(--info);
+            margin-bottom: 20px;
+            border-radius: 8px;
+            margin-left: 30px;
+            position: relative;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -14px;
+            top: 25px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--info);
+            border: 4px solid white;
+        }
+        
+        .timeline-date {
+            font-weight: bold;
+            color: var(--info);
+            margin-bottom: 10px;
+        }
+        
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 5px solid;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            border-color: #0c5460;
+            color: #0c5460;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            border-color: #155724;
+            color: #155724;
+        }
+        
+        .alert-warning {
+            background: #fff3cd;
+            border-color: #856404;
+            color: #856404;
+        }
+        
+        .alert-danger {
+            background: #f8d7da;
+            border-color: #721c24;
+            color: #721c24;
+        }
+        
+        .chart-container {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .metric-value {
+                font-size: 2em;
+            }
+            
+            table {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚡ Fast Times PDX</h1>
+            <div class="subtitle">Reset & Restructure Plan</div>
+            <div class="crisis-banner">
+                🎯 Dec 21-30: Comprehensive Reset Week → Build Catering + Marketing + Systems → Reopen Jan 1 Profitable
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab-button active" onclick="switchTab('overview')">📊 Overview</button>
+            <button class="tab-button" onclick="switchTab('training')">🔧 Training Week</button>
+            <button class="tab-button" onclick="switchTab('staffing')">👥 New Staffing</button>
+            <button class="tab-button" onclick="switchTab('financial')">💰 Financials</button>
+            <button class="tab-button" onclick="switchTab('timeline')">📅 Timeline</button>
+            <button class="tab-button" onclick="switchTab('comparison')">⚖️ Comparison</button>
+        </div>
+        
+        <!-- OVERVIEW TAB -->
+        <div id="overview" class="tab-content active">
+            <div class="card">
+                <h2>Executive Summary: The Reset Plan</h2>
+                
+                <div class="alert alert-danger">
+                    <strong>Current Crisis:</strong> Losing $31,000/month with 82.9% labor ratio (vs 25-32% industry standard). Restaurant staffed for $174K/month in sales while only generating $63K.
+                </div>
+                
+                <div class="alert alert-success">
+                    <strong>Solution:</strong> Close to public Dec 21-30 for comprehensive operational reset. Build out catering program, create marketing assets, beautify space, standardize operations, and train optimized 9-person team. Reopen Jan 1 with new GM (Tim), achieve immediate profitability at 41.3% labor ratio, and launch revenue-generating initiatives.
+                </div>
+                
+                <div class="metrics-grid">
+                    <div class="metric-card danger">
+                        <div class="metric-label">Current Monthly Loss</div>
+                        <div class="metric-value">-$31,000</div>
+                        <div class="metric-detail">At 82.9% labor ratio</div>
+                    </div>
+                    
+                    <div class="metric-card warning">
+                        <div class="metric-label">Training Week Cost</div>
+                        <div class="metric-value">$8,194</div>
+                        <div class="metric-detail">Dec 21-30 (10 days)</div>
+                    </div>
+                    
+                    <div class="metric-card warning">
+                        <div class="metric-label">New Monthly P&L</div>
+                        <div class="metric-value">-$1,263</div>
+                        <div class="metric-detail">At 46.5% labor with buffer</div>
+                    </div>
+                    
+                    <div class="metric-card success">
+                        <div class="metric-label">With 4% Growth</div>
+                        <div class="metric-value">Break Even</div>
+                        <div class="metric-detail">Easily achieved with reset initiatives</div>
+                    </div>
+                    
+                    <div class="metric-card success">
+                        <div class="metric-label">90-Day Savings</div>
+                        <div class="metric-value">$67,972</div>
+                        <div class="metric-detail">vs. current operations</div>
+                    </div>
+                </div>
+                
+                <h3>Key Changes</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th class="text-right">Current</th>
+                            <th class="text-right">New Model</th>
+                            <th class="text-right">Change</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Total Employees</strong></td>
+                            <td class="text-right mono">19</td>
+                            <td class="text-right mono">10</td>
+                            <td class="text-right mono" style="color: #27ae60;">-9 (-47%)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Monthly Labor Cost</strong></td>
+                            <td class="text-right mono">$52,315</td>
+                            <td class="text-right mono">$29,355</td>
+                            <td class="text-right mono" style="color: #27ae60;">-$22,960 (-44%)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Labor Ratio</strong></td>
+                            <td class="text-right mono">82.9%</td>
+                            <td class="text-right mono">46.5%</td>
+                            <td class="text-right mono" style="color: #27ae60;">-36.4 pts</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Weekly Hours</strong></td>
+                            <td class="text-right mono">~400</td>
+                            <td class="text-right mono">362</td>
+                            <td class="text-right mono" style="color: #27ae60;">-38 (-10%)</td>
+                        </tr>
+                        <tr class="success-row">
+                            <td><strong>Monthly P&L (current sales)</strong></td>
+                            <td class="text-right mono">-$31,000</td>
+                            <td class="text-right mono">-$1,263</td>
+                            <td class="text-right mono" style="color: #27ae60;">+$29,737</td>
+                        </tr>
+                        <tr style="background: #d4edda;">
+                            <td><strong>Monthly P&L (with 4% growth)</strong></td>
+                            <td class="text-right mono">-$31,000</td>
+                            <td class="text-right mono">$0</td>
+                            <td class="text-right mono" style="color: #27ae60;">+$31,000</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3>The Plan in 3 Steps</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div style="padding: 20px; background: #fff3cd; border-radius: 10px; border-left: 5px solid #f39c12;">
+                        <h4>1. Preparation (Now - Dec 20)</h4>
+                        <ul style="margin-top: 10px; line-height: 1.8;">
+                            <li>Finalize Tim's start date (Jan 1)</li>
+                            <li>Identify 6 keeper line staff</li>
+                            <li>Transition to new staffing structure</li>
+                            <li>Plan comprehensive reset activities</li>
+                            <li>Final public service Dec 20</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="padding: 20px; background: #d1ecf1; border-radius: 10px; border-left: 5px solid #3498db;">
+                        <h4>2. Reset Week (Dec 21-30)</h4>
+                        <ul style="margin-top: 10px; line-height: 1.8;">
+                            <li>Deep clean & beautification</li>
+                            <li>Build out catering program fully</li>
+                            <li>Create marketing assets & content</li>
+                            <li>Recipe standardization & training</li>
+                            <li>Community outreach & partnerships</li>
+                            <li>Mock service & systems testing</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="padding: 20px; background: #d4edda; border-radius: 10px; border-left: 5px solid #27ae60;">
+                        <h4>3. Relaunch (Jan 1+)</h4>
+                        <ul style="margin-top: 10px; line-height: 1.8;">
+                            <li>New Year reopening with impact</li>
+                            <li>Tim as full-time GM</li>
+                            <li>9-person efficient team</li>
+                            <li>Catering program launched</li>
+                            <li>Marketing campaigns activated</li>
+                            <li>Immediate profitability</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- TRAINING WEEK TAB -->
+        <div id="training" class="tab-content">
+            <div class="card">
+                <h2>Reset Week Analysis (December 21-30)</h2>
+                
+                <div class="alert alert-info">
+                    <strong>Strategy:</strong> This isn't just training - it's a complete operational reset. Close to public and use every labor hour productively: beautify the space, build marketing assets, launch catering program, standardize systems, and train the optimized team. All the deferred work that's been impossible during crisis mode.
+                </div>
+                
+                <div class="alert alert-success">
+                    <strong>Philosophy:</strong> Every labor hour must generate value. We're not just preparing to reopen - we're building infrastructure for growth that will drive revenue for months to come.
+                </div>
+                
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Training Week Labor</div>
+                        <div class="metric-value">$4,324</div>
+                        <div class="metric-detail">9 people × reduced hours</div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-label">Food Costs</div>
+                        <div class="metric-value">$1,500</div>
+                        <div class="metric-detail">Training pies & staff meals</div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-label">Fixed Costs</div>
+                        <div class="metric-value">$1,370</div>
+                        <div class="metric-detail">Utilities & services</div>
+                    </div>
+                    
+                    <div class="metric-card warning">
+                        <div class="metric-label">Transition Costs</div>
+                        <div class="metric-value">$1,000</div>
+                        <div class="metric-detail">GM transition</div>
+                    </div>
+                </div>
+                
+                <h3>Complete Cost Breakdown</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Details</th>
+                            <th class="text-right">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="3" style="background: #f8f9fa; font-weight: bold;">LABOR COSTS</td>
+                        </tr>
+                        <tr>
+                            <td>Tim (New GM)</td>
+                            <td>32 hrs × $25/hr</td>
+                            <td class="text-right mono">$800</td>
+                        </tr>
+                        <tr>
+                            <td>Mikey (Kitchen Manager)</td>
+                            <td>32 hrs × $25/hr</td>
+                            <td class="text-right mono">$800</td>
+                        </tr>
+                        <tr>
+                            <td>Oscar (Lead)</td>
+                            <td>32 hrs × $22/hr</td>
+                            <td class="text-right mono">$704</td>
+                        </tr>
+                        <tr>
+                            <td>Security (Andrew W)</td>
+                            <td>10 hrs × $22/hr</td>
+                            <td class="text-right mono">$220</td>
+                        </tr>
+                        <tr>
+                            <td>5 Line Staff</td>
+                            <td>5 people × 20 hrs × $18/hr</td>
+                            <td class="text-right mono">$1,800</td>
+                        </tr>
+                        <tr style="background: #fff3cd;">
+                            <td><strong>Total Labor</strong></td>
+                            <td></td>
+                            <td class="text-right mono"><strong>$4,324</strong></td>
+                        </tr>
+                        
+                        <tr>
+                            <td colspan="3" style="background: #f8f9fa; font-weight: bold;">OTHER COSTS</td>
+                        </tr>
+                        <tr>
+                            <td>Food & Ingredients</td>
+                            <td>Training pies, testing, staff meals</td>
+                            <td class="text-right mono">$1,500</td>
+                        </tr>
+                        <tr>
+                            <td>Utilities</td>
+                            <td>Electric, gas, internet (reduced)</td>
+                            <td class="text-right mono">$800</td>
+                        </tr>
+                        <tr>
+                            <td>Services</td>
+                            <td>Security monitoring, minimal services</td>
+                            <td class="text-right mono">$570</td>
+                        </tr>
+                        <tr>
+                            <td>GM Transition</td>
+                            <td>Management changeover</td>
+                            <td class="text-right mono">$1,000</td>
+                        </tr>
+                        
+                        <tr>
+                            <td colspan="3" style="background: #f8f9fa; font-weight: bold;">ELIMINATED COSTS</td>
+                        </tr>
+                        <tr style="color: #27ae60;">
+                            <td>Normal Operations Labor</td>
+                            <td>Would be ~$14,000</td>
+                            <td class="text-right mono">-$9,676</td>
+                        </tr>
+                        <tr style="color: #27ae60;">
+                            <td>Normal COGS</td>
+                            <td>No sales = minimal food cost</td>
+                            <td class="text-right mono">-$5,000</td>
+                        </tr>
+                        <tr style="color: #27ae60;">
+                            <td>Variable Costs</td>
+                            <td>Delivery fees, CC processing</td>
+                            <td class="text-right mono">-$2,000</td>
+                        </tr>
+                        
+                        <tr class="highlight-row">
+                            <td><strong>TOTAL TRAINING WEEK COST</strong></td>
+                            <td></td>
+                            <td class="text-right mono"><strong>$8,194</strong></td>
+                        </tr>
+                        
+                        <tr class="success-row">
+                            <td><strong>vs. Staying Open (10 days loss)</strong></td>
+                            <td>Would lose $1,043/day × 10</td>
+                            <td class="text-right mono"><strong>$10,430</strong></td>
+                        </tr>
+                        
+                        <tr class="success-row">
+                            <td><strong>NET SAVINGS</strong></td>
+                            <td>Plus you get complete reset</td>
+                            <td class="text-right mono"><strong>+$2,236</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3>Reset Week Schedule: Every Hour Counts</h3>
+                
+                <div style="margin: 20px 0; padding: 20px; background: #fff3cd; border-radius: 10px;">
+                    <strong>💡 Key Insight:</strong> This week accomplishes 6+ months of deferred projects that are impossible during normal operations. Every labor dollar generates multiple ROI through improved operations, marketing assets, and revenue-generating programs.
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 15%;">Days</th>
+                            <th style="width: 45%;">Core Activities</th>
+                            <th style="width: 20%;">Team</th>
+                            <th style="width: 20%;">Deliverables</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="background: #f8f9fa;">
+                            <td colspan="4"><strong>PHASE 1: FOUNDATION & BEAUTIFICATION</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Dec 21-22<br/>(Sat-Sun)</strong></td>
+                            <td>
+                                <strong>🧹 Deep Clean & Beautification:</strong>
+                                <ul style="margin: 10px 0; padding-left: 20px; line-height: 1.6;">
+                                    <li>Complete restaurant deep clean (hood, equipment, floors)</li>
+                                    <li>Paint touch-ups, repair any damage</li>
+                                    <li>Organize and optimize kitchen workflow</li>
+                                    <li>Deep clean FOH - windows, tables, bathroom refresh</li>
+                                </ul>
+                                <strong>📊 Systems Audit:</strong>
+                                <ul style="margin: 10px 0; padding-left: 20px; line-height: 1.6;">
+                                    <li>Equipment inspection and maintenance</li>
+                                    <li>POS system cleanup and optimization</li>
+                                    <li>Inventory assessment and organization</li>
+                                    <li>Identify any needed repairs/replacements</li>
+                                </ul>
+                            </td>
+                            <td>Tim, Mikey, Oscar + 2 staff<br/><br/>(Heavy labor focus)</td>
+                            <td>
+                                • Restaurant sparkling clean<br/>
+                                • All equipment serviced<br/>
+                                • Optimized kitchen layout<br/>
+                                • Systems audit complete
+                            </td>
+                        </tr>
+                        
+                        <tr style="background: #f8f9fa;">
+                            <td colspan="4"><strong>PHASE 2: OPERATIONS & CATERING</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Dec 23-24<br/>(Mon-Tue)</strong></td>
+                            <td>
+                                <strong>👨‍🍳 Recipe & Prep Standardization (Mikey leads):</strong>
+                                <ul style="margin: 10px 0; padding-left: 20px; line-height: 1.6;">
+                                    <li>Document all recipes with exact measurements</li>
+                                    <li>Establish prep protocols and schedules</li>
+                                    <li>Practice making every menu item correctly</li>
+                                    <li>Verify food costing and portion control</li>
+                                </ul>
+                                <strong>🎉 Catering Program Buildout:</strong>
+                                <ul style="margin: 10px 0; padding-left: 20px; line-height: 1.6;">
+                                    <li>Create catering menu and pricing</li>
+                                    <li>Design catering packages (office lunch, party packs, events)</li>
+                                    <li>Build order forms and process</li>
+                                    <li>Create catering marketing materials</li>
+                                    <li>Identify target businesses/organizations</li>
+                                    <li>Practice catering prep and packaging</li>
+                                </ul>
+                            </td>
+                            <td>Full team<br/>(9 people)<br/><br/>Mikey leads kitchen, Oscar leads catering</td>
+                            <td>
+                                • Recipe manual complete<br/>
+                                • Catering menu designed<br/>
+                                • Catering pricing set<br/>
+                                • Marketing materials ready<br/>
+                                • Order system built
+                            </td>
+                        </tr>
+                        
+                        <tr>
+                            <td><strong>Dec 25<br/>(Wed)</strong></td>
+                            <td style="text-align: center; color: #666;"><em>Christmas Day - Closed for Holiday</em></td>
+                            <td style="text-align: center; color: #666;">No one</td>
+                            <td style="text-align: center; color: #666;">Team rest day</td>
+                        </tr>
+                        
+                        <tr style="background: #f8f9fa;">
+                            <td colspan="4"><strong>PHASE 3: MARKETING & TRAINING</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Dec 26-27<br/>(Thu-Fri)</strong></td>
+                            <td>
+                                <strong>📱 Marketing & Outreach:</strong>
+                                <ul style="margin: 10px 0; padding-left: 20px; line-height: 1.6;">
+                                    <li>Photoshoot all menu items (professional quality)</li>
+                                    <li>Create social media content library (30+ posts)</li>
+                                    <li>Update website with new photos/info</li>
+                                    <li>Design reopening campaign materials</li>
+                                    <li>Build email list and first newsletter</li>
+                                    <li>Create flyers for neighborhood distribution</li>
+                                    <li>Reach out to local businesses (catering prospects)</li>
+                                </ul>
+                                <strong>🎓 Team Cross-Training:</strong>
+                                <ul style="margin: 10px 0; padding-left: 20px; line-height: 1.6;">
+                                    <li>Everyone learns prep, cook, FOH</li>
+                                    <li>POS training for all positions</li>
+                                    <li>Service standards and expectations</li>
+                                    <li>Late-night protocols and safety</li>
+                                </ul>
+                            </td>
+                            <td>Full team<br/>(9 people)<br/><br/>Split into marketing & training groups</td>
+                            <td>
+                                • Professional food photos<br/>
+                                • 30+ social posts ready<br/>
+                                • Website updated<br/>
+                                • Reopening campaign live<br/>
+                                • Everyone cross-trained<br/>
+                                • Marketing materials printed
+                            </td>
+                        </tr>
+                        
+                        <tr style="background: #f8f9fa;">
+                            <td colspan="4"><strong>PHASE 4: TESTING & LAUNCH PREP</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Dec 28-29<br/>(Sat-Sun)</strong></td>
+                            <td>
+                                <strong>🍕 Mock Service & System Testing:</strong>
+                                <ul style="margin: 10px 0; padding-left: 20px; line-height: 1.6;">
+                                    <li>Full mock service with friends/family</li>
+                                    <li>Test all systems under load (POS, kitchen, FOH)</li>
+                                    <li>Practice catering order fulfillment</li>
+                                    <li>Test late-night operations</li>
+                                    <li>Identify and fix any issues</li>
+                                </ul>
+                                <strong>🎯 Final Systems Optimization:</strong>
+                                <ul style="margin: 10px 0; padding-left: 20px; line-height: 1.6;">
+                                    <li>Adjust processes based on mock service</li>
+                                    <li>Finalize scheduling templates</li>
+                                    <li>Set up delivery platform optimization</li>
+                                    <li>Create opening/closing checklists</li>
+                                </ul>
+                            </td>
+                            <td>Full team<br/>(9 people)<br/><br/>High-intensity practice</td>
+                            <td>
+                                • Full mock service completed<br/>
+                                • All systems tested<br/>
+                                • Issues identified and fixed<br/>
+                                • Team ready for volume<br/>
+                                • Processes optimized
+                            </td>
+                        </tr>
+                        
+                        <tr style="background: #f8f9fa;">
+                            <td colspan="4"><strong>PHASE 5: LAUNCH PREPARATION</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Dec 30<br/>(Mon)</strong></td>
+                            <td>
+                                <strong>📦 Final Launch Prep:</strong>
+                                <ul style="margin: 10px 0; padding-left: 20px; line-height: 1.6;">
+                                    <li>Inventory restock for reopening</li>
+                                    <li>Final marketing push (social media blitz)</li>
+                                    <li>Distribute flyers in neighborhood</li>
+                                    <li>Confirm catering outreach follow-ups</li>
+                                    <li>Restaurant final setup and staging</li>
+                                    <li>Team meeting: expectations, culture, goals</li>
+                                    <li>New Year's Eve special prep</li>
+                                </ul>
+                            </td>
+                            <td>Tim, Mikey, Oscar + 3 staff<br/><br/>(Final polish)</td>
+                            <td>
+                                • Fully stocked for launch<br/>
+                                • Marketing activated<br/>
+                                • Neighborhood aware<br/>
+                                • Team aligned<br/>
+                                • Ready for NYE opening
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3>Value Generated: Beyond Training</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 30px 0;">
+                    <div style="padding: 20px; background: #d4edda; border-radius: 10px; border-left: 5px solid #27ae60;">
+                        <h4 style="margin-bottom: 10px;">💰 Revenue-Generating Assets</h4>
+                        <ul style="line-height: 1.8;">
+                            <li><strong>Catering Program:</strong> Could add $5-10K/month</li>
+                            <li><strong>Professional Photos:</strong> Boost online orders 20-30%</li>
+                            <li><strong>Marketing Library:</strong> 6 months of content ready</li>
+                            <li><strong>Email List:</strong> Direct customer channel built</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="padding: 20px; background: #d1ecf1; border-radius: 10px; border-left: 5px solid #3498db;">
+                        <h4 style="margin-bottom: 10px;">⚙️ Operational Improvements</h4>
+                        <ul style="line-height: 1.8;">
+                            <li><strong>Recipe Standards:</strong> Consistent quality, accurate costing</li>
+                            <li><strong>Cross-Training:</strong> Maximum scheduling flexibility</li>
+                            <li><strong>Optimized Layout:</strong> Faster service, less waste</li>
+                            <li><strong>Systems Documentation:</strong> Scalable operations</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="padding: 20px; background: #fff3cd; border-radius: 10px; border-left: 5px solid #f39c12;">
+                        <h4 style="margin-bottom: 10px;">🎨 Brand & Customer Experience</h4>
+                        <ul style="line-height: 1.8;">
+                            <li><strong>Beautified Space:</strong> Better reviews, repeat visits</li>
+                            <li><strong>Professional Presence:</strong> Credibility for catering</li>
+                            <li><strong>Consistent Service:</strong> Training reduces mistakes</li>
+                            <li><strong>Community Outreach:</strong> Local business relationships</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="alert alert-success">
+                    <strong>ROI Perspective:</strong> You're investing $9,194 for one week, but generating:
+                    <ul style="margin-top: 10px; line-height: 1.8;">
+                        <li>✅ Complete operational reset ($50K+ value if contracted out)</li>
+                        <li>✅ Catering program that could add $60-120K annually</li>
+                        <li>✅ Marketing assets worth $10K+ if professionally produced</li>
+                        <li>✅ Team training that reduces turnover and mistakes</li>
+                        <li>✅ Systems documentation for scalability</li>
+                    </ul>
+                    <strong>This isn't an expense - it's an investment with massive ROI.</strong>
+                </div>
+                
+                <div class="alert alert-success" style="margin-top: 30px;">
+                    <strong>Why This Works:</strong> You're spending $8,194 to save $67,972 over 90 days. Plus you get: deep clean, recipe standardization, team alignment, system reset, and a fresh start with optimized operations.
+                </div>
+                
+                <h3>Projected Revenue Impact from Reset Week Activities</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Initiative</th>
+                            <th>Investment During Reset Week</th>
+                            <th class="text-right">Projected Monthly Impact</th>
+                            <th class="text-right">12-Month Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Catering Program</strong></td>
+                            <td>Menu design, pricing, materials, practice (16 hrs)</td>
+                            <td class="text-right mono" style="color: #27ae60;">+$5,000 - $10,000</td>
+                            <td class="text-right mono" style="color: #27ae60;">+$60,000 - $120,000</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Professional Food Photography</strong></td>
+                            <td>Photoshoot all menu items (8 hrs)</td>
+                            <td class="text-right mono" style="color: #27ae60;">+$2,000</td>
+                            <td class="text-right mono" style="color: #27ae60;">+$24,000</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Marketing Content Library</strong></td>
+                            <td>Create 30+ posts, email campaigns (12 hrs)</td>
+                            <td class="text-right mono" style="color: #27ae60;">+$1,500</td>
+                            <td class="text-right mono" style="color: #27ae60;">+$18,000</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Beautification & Atmosphere</strong></td>
+                            <td>Deep clean, paint, optimize layout (20 hrs)</td>
+                            <td class="text-right mono" style="color: #27ae60;">+$1,000</td>
+                            <td class="text-right mono" style="color: #27ae60;">+$12,000</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Community Outreach</strong></td>
+                            <td>Business relationships, neighborhood flyers (8 hrs)</td>
+                            <td class="text-right mono" style="color: #27ae60;">+$1,000</td>
+                            <td class="text-right mono" style="color: #27ae60;">+$12,000</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Operational Efficiency</strong></td>
+                            <td>Recipe standardization, cross-training (24 hrs)</td>
+                            <td class="text-right mono" style="color: #27ae60;">+$500</td>
+                            <td class="text-right mono" style="color: #27ae60;">+$6,000</td>
+                        </tr>
+                        <tr class="success-row">
+                            <td><strong>TOTAL PROJECTED IMPACT</strong></td>
+                            <td><strong>~88 productive hours</strong></td>
+                            <td class="text-right mono"><strong>+$11,000 - $16,000/mo</strong></td>
+                            <td class="text-right mono"><strong>+$132,000 - $192,000/yr</strong></td>
+                        </tr>
+                        <tr style="background: #fff3cd;">
+                            <td colspan="3"><strong>Reset Week Investment</strong></td>
+                            <td class="text-right mono"><strong>$8,194</strong></td>
+                        </tr>
+                        <tr class="success-row">
+                            <td colspan="3"><strong>ROI (12 months)</strong></td>
+                            <td class="text-right mono"><strong>1,511% - 2,244%</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="alert alert-info" style="margin-top: 20px;">
+                    <strong>Conservative Estimates:</strong> These projections assume modest success. Catering alone could exceed $10K/month with strong execution. Professional photos typically increase online orders 20-30%. The beautified space improves reviews and repeat customer rates. Every element compounds.
+                </div>
+                
+                <div style="margin-top: 30px; padding: 25px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px; color: white;">
+                    <h4 style="color: white; margin-bottom: 15px;">💡 The Real Equation:</h4>
+                    <div style="font-size: 1.1em; line-height: 1.8;">
+                        <strong>Without Reset Week:</strong> Continue losing $31,000/month = -$372,000 annually<br/>
+                        <strong>With Reset Week:</strong> Invest $8,194 once + become profitable at $2,013/month + add $11K-16K in growth initiatives = +$156,000 - $216,000 annually<br/>
+                        <br/>
+                        <strong style="font-size: 1.3em;">Net Difference: $528,000 - $588,000 annual swing</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- STAFFING TAB -->
+        <div id="staffing" class="tab-content">
+            <div class="card">
+                <h2>New 9-Person Team Structure</h2>
+                
+                <div class="alert alert-info">
+                    <strong>Philosophy:</strong> Lean, cross-trained team where leadership works shifts. Everyone multi-skilled, no dead weight, maximum efficiency.
+                </div>
+                
+                <h3>Leadership Team (4 People)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Position</th>
+                            <th>Name</th>
+                            <th>Rate/Salary</th>
+                            <th>Hours/Week</th>
+                            <th class="text-right">Monthly Cost</th>
+                            <th>Key Responsibilities</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="tag tag-core">CORE</span> <strong>General Manager</strong></td>
+                            <td>Tim (New Hire)</td>
+                            <td>$25/hr</td>
+                            <td>40</td>
+                            <td class="text-right mono">$4,333</td>
+                            <td>Overall operations, P&L, scheduling, staff management</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag tag-core">CORE</span> <strong>Kitchen Manager</strong></td>
+                            <td>Mikey</td>
+                            <td>$52k salary</td>
+                            <td>40</td>
+                            <td class="text-right mono">$4,333</td>
+                            <td>Recipes, food costing, ordering, prep, kitchen operations</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag tag-core">CORE</span> <strong>Lead (Hourly)</strong></td>
+                            <td>Oscar</td>
+                            <td>$22/hr + tips</td>
+                            <td>40</td>
+                            <td class="text-right mono">$3,813</td>
+                            <td>Shift leadership, training, floor operations</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag tag-core">SECURITY</span> <strong>Late-Night Security</strong></td>
+                            <td>Andrew Wright</td>
+                            <td>$22/hr</td>
+                            <td>20</td>
+                            <td class="text-right mono">$1,900</td>
+                            <td>Late-night coverage, required for Burnside location</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td colspan="4"><strong>Leadership Subtotal</strong></td>
+                            <td class="text-right mono"><strong>$14,379</strong></td>
+                            <td><strong>22.8% of sales</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3>Line Staff (6 People)</h3>
+                <div class="alert alert-warning">
+                    <strong>Selection Criteria:</strong> Keep your 6 best cross-trained employees who can work multiple positions (prep, cook, FOH), handle late-night shifts, high reliability, willing to work 32 hrs/week.
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Position Type</th>
+                            <th>Count</th>
+                            <th>Avg Rate</th>
+                            <th>Hours/Week Each</th>
+                            <th class="text-right">Weekly Cost</th>
+                            <th class="text-right">Monthly Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Cross-Trained Staff</strong></td>
+                            <td class="text-center">6</td>
+                            <td>$18/hr</td>
+                            <td class="text-center">32</td>
+                            <td class="text-right mono">$3,456</td>
+                            <td class="text-right mono">$14,976</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td colspan="5"><strong>Total Line Staff</strong></td>
+                            <td class="text-right mono"><strong>$14,976</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                    <strong>Staff Budget Breakdown:</strong>
+                    <ul style="margin-top: 10px; line-height: 1.8;">
+                        <li>6 employees × 32 hours/week = 192 hours/week</li>
+                        <li>192 hours × $18/hr = $3,456/week</li>
+                        <li>$3,456 × 4.33 weeks = $14,976/month</li>
+                        <li>Must be able to: prep, cook, run FOH, work late nights</li>
+                        <li>Flexible scheduling across all day parts</li>
+                        <li><strong>Provides proper coverage buffer for breaks, training, shift changes</strong></li>
+                    </ul>
+                </div>
+                
+                <h3>Total Labor Summary</h3>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Total Team Size</div>
+                        <div class="metric-value">10</div>
+                        <div class="metric-detail">Down from 19 people</div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-label">Total Weekly Hours</div>
+                        <div class="metric-value">362</div>
+                        <div class="metric-detail">Covers 357 hrs needed</div>
+                    </div>
+                    
+                    <div class="metric-card success">
+                        <div class="metric-label">Monthly Labor Cost</div>
+                        <div class="metric-value">$29,355</div>
+                        <div class="metric-detail">46.5% of sales</div>
+                    </div>
+                    
+                    <div class="metric-card success">
+                        <div class="metric-label">Monthly Savings</div>
+                        <div class="metric-value">$22,960</div>
+                        <div class="metric-detail">vs. current $52,315</div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info" style="margin-top: 20px;">
+                    <strong>Reality Check:</strong> With proper staffing buffer (362 hours vs 357 minimum needed), labor is 46.5% of current sales. This is above the 25-32% industry ideal, but:<br/>
+                    <ul style="margin-top: 10px; line-height: 1.8;">
+                        <li>✅ Still saves $22,960/month vs current structure</li>
+                        <li>✅ Only need 4% sales growth ($2,600/month) to reach profitability</li>
+                        <li>✅ Provides sustainable operations with proper coverage</li>
+                        <li>✅ Alternative: Can run leaner at 43% labor with tighter scheduling (8-9 people)</li>
+                    </ul>
+                </div>
+                
+                <h3>Coverage Model: Realistic Needs</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Coverage Need</th>
+                            <th>Hours/Week</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Hours restaurant is open</td>
+                            <td class="text-center">109 hrs</td>
+                            <td>Mon-Thu: 11am-2am (15 hrs × 4), Fri-Sat: 11am-4am (17 hrs × 2), Sun: 11am-2am (15 hrs)</td>
+                        </tr>
+                        <tr>
+                            <td>Minimum staffing (3 people always)</td>
+                            <td class="text-center">327 hrs</td>
+                            <td>109 hours open × 3 people = bare minimum</td>
+                        </tr>
+                        <tr>
+                            <td>+ Shift change overlap</td>
+                            <td class="text-center">+10 hrs</td>
+                            <td>15 min overlap per shift change</td>
+                        </tr>
+                        <tr>
+                            <td>+ Breaks, training, coverage</td>
+                            <td class="text-center">+20 hrs</td>
+                            <td>Mandatory breaks, coverage gaps, training time</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td><strong>Realistic Weekly Need</strong></td>
+                            <td class="text-center"><strong>357 hrs</strong></td>
+                            <td><strong>Actual operational requirement</strong></td>
+                        </tr>
+                        <tr style="background: #f8f9fa;">
+                            <td colspan="3"><strong>How We Cover It:</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Leadership working shifts</strong></td>
+                            <td class="text-center"><strong>170 hrs</strong></td>
+                            <td>Tim (40), Mikey (40), Oscar (40), Security (20), plus 30 hrs on line</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Line staff (6 people)</strong></td>
+                            <td class="text-center"><strong>192 hrs</strong></td>
+                            <td>6 people × 32 hrs/week each</td>
+                        </tr>
+                        <tr class="success-row">
+                            <td><strong>Total Staffed Hours</strong></td>
+                            <td class="text-center"><strong>362 hrs</strong></td>
+                            <td><strong>Covers 357 need with 5-hour buffer ✓</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="alert alert-warning" style="margin-top: 30px;">
+                    <strong>Reality Check:</strong> This 10-person model is lean but sustainable. With 362 hours covering 357 minimum needed, there's a small buffer for breaks and shift changes. Labor at 46.5% means you need just 4% sales growth to reach profitability - which reset week initiatives (catering, marketing, beautification) are specifically designed to deliver. This is the balance between proper coverage and financial viability.
+                </div>
+                
+                <h3>Staffing Transition (from 19 to 10)</h3>
+                <div style="padding: 20px; background: #fff3cd; border-radius: 10px; margin-top: 20px;">
+                    <strong>New Structure (10 people):</strong>
+                    <ul style="margin-top: 10px; line-height: 1.8;">
+                        <li><strong>Leadership Team (4):</strong> Tim (new GM), Mikey (KM), Oscar (Lead), Andrew Wright (Security)</li>
+                        <li><strong>Line Staff (6):</strong> Keep the 6 best cross-trained performers</li>
+                    </ul>
+                    
+                    <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 8px;">
+                        <strong>Selection Process for Line Staff:</strong>
+                        <ol style="margin-top: 10px; line-height: 1.8;">
+                            <li>Identify all employees who can work prep + cook + FOH</li>
+                            <li>Check late-night availability (critical for Burnside)</li>
+                            <li>Review reliability (attendance, punctuality)</li>
+                            <li>Assess willingness to work 32 hrs/week</li>
+                            <li>Select top 6 performers</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- FINANCIAL TAB -->
+        <div id="financial" class="tab-content">
+            <div class="card">
+                <h2>Financial Projections: January 2025 (First Full Month)</h2>
+                
+                <div class="alert alert-warning">
+                    <strong>Realistic Model:</strong> With proper staffing buffer (10 people, 362 hours/week), labor is 46.5% of current sales. This creates a small monthly loss that becomes profitable with just 4% sales growth - easily achievable through reset week initiatives (catering, marketing, beautification).
+                </div>
+                
+                <h3>Revenue</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Source</th>
+                            <th class="text-right">Amount</th>
+                            <th class="text-right">% of Total</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="success-row">
+                            <td><strong>Net Sales</strong></td>
+                            <td class="text-right mono"><strong>$63,099</strong></td>
+                            <td class="text-right mono"><strong>100.0%</strong></td>
+                            <td>Maintaining current 4-week average</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3>Operating Costs</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th class="text-right">Amount</th>
+                            <th class="text-right">% of Sales</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="4" style="background: #f8f9fa; font-weight: bold;">COST OF GOODS SOLD</td>
+                        </tr>
+                        <tr>
+                            <td>Food & Beverage</td>
+                            <td class="text-right mono">$18,930</td>
+                            <td class="text-right mono">30.0%</td>
+                            <td>Industry standard for pizza operations</td>
+                        </tr>
+                        
+                        <tr>
+                            <td colspan="4" style="background: #f8f9fa; font-weight: bold;">LABOR</td>
+                        </tr>
+                        <tr>
+                            <td>Leadership Team</td>
+                            <td class="text-right mono">$14,379</td>
+                            <td class="text-right mono">22.8%</td>
+                            <td>Tim, Mikey, Oscar, Security Andrew</td>
+                        </tr>
+                        <tr>
+                            <td>Line Staff (6 people)</td>
+                            <td class="text-right mono">$14,976</td>
+                            <td class="text-right mono">23.7%</td>
+                            <td>6 × 32 hrs/week × $18/hr</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td><strong>Total Labor</strong></td>
+                            <td class="text-right mono"><strong>$29,355</strong></td>
+                            <td class="text-right mono"><strong>46.5%</strong></td>
+                            <td><strong>With proper coverage buffer</strong></td>
+                        </tr>
+                        
+                        <tr>
+                            <td colspan="4" style="background: #f8f9fa; font-weight: bold;">FIXED COSTS</td>
+                        </tr>
+                        <tr>
+                            <td>Rent + Alley Lease</td>
+                            <td class="text-right mono">$8,889</td>
+                            <td class="text-right mono">14.1%</td>
+                            <td>$8,300 + $589</td>
+                        </tr>
+                        <tr>
+                            <td>Utilities</td>
+                            <td class="text-right mono">$1,370</td>
+                            <td class="text-right mono">2.2%</td>
+                            <td>Electric, gas, water, internet</td>
+                        </tr>
+                        <tr>
+                            <td>Services</td>
+                            <td class="text-right mono">$770</td>
+                            <td class="text-right mono">1.2%</td>
+                            <td>Linen, ice, security monitoring, etc.</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td><strong>Total Fixed Costs</strong></td>
+                            <td class="text-right mono"><strong>$11,029</strong></td>
+                            <td class="text-right mono"><strong>17.5%</strong></td>
+                            <td></td>
+                        </tr>
+                        
+                        <tr>
+                            <td colspan="4" style="background: #f8f9fa; font-weight: bold;">VARIABLE COSTS</td>
+                        </tr>
+                        <tr>
+                            <td>Delivery Platform Fees</td>
+                            <td class="text-right mono">$3,155</td>
+                            <td class="text-right mono">5.0%</td>
+                            <td>20% of sales through platforms at 25% fee</td>
+                        </tr>
+                        <tr>
+                            <td>Credit Card Processing</td>
+                            <td class="text-right mono">$1,893</td>
+                            <td class="text-right mono">3.0%</td>
+                            <td>~3% of all sales</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td><strong>Total Variable Costs</strong></td>
+                            <td class="text-right mono"><strong>$5,048</strong></td>
+                            <td class="text-right mono"><strong>8.0%</strong></td>
+                            <td></td>
+                        </tr>
+                        
+                        <tr style="background: #fff3cd;">
+                            <td><strong>TOTAL OPERATING COSTS</strong></td>
+                            <td class="text-right mono"><strong>$64,362</strong></td>
+                            <td class="text-right mono"><strong>102.0%</strong></td>
+                            <td></td>
+                        </tr>
+                        
+                        <tr style="background: #fff3cd;">
+                            <td><strong>NET PROFIT/LOSS (at current sales)</strong></td>
+                            <td class="text-right mono"><strong>-$1,263</strong></td>
+                            <td class="text-right mono"><strong>-2.0%</strong></td>
+                            <td><strong>Small loss with proper buffer</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="alert alert-success" style="margin-top: 20px;">
+                    <strong>Path to Profitability:</strong> Need only $65,625 in monthly sales (4% increase) to break even with proper staffing buffer. Reset week initiatives (catering launch, marketing assets, beautification) are projected to add $11K-16K/month, making profitability highly achievable.
+                </div>
+                
+                <h3>Alternative Staffing Models</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Model</th>
+                            <th>Team Size</th>
+                            <th>Weekly Hours</th>
+                            <th class="text-right">Monthly Labor</th>
+                            <th class="text-right">Labor %</th>
+                            <th class="text-right">Monthly P&L</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Lean (Tight)</strong></td>
+                            <td>8-9 people</td>
+                            <td>334-340</td>
+                            <td class="text-right mono">$27,133</td>
+                            <td class="text-right mono">43%</td>
+                            <td class="text-right mono" style="color: #27ae60;">+$40</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td><strong>Recommended (Buffer)</strong></td>
+                            <td>10 people</td>
+                            <td>362</td>
+                            <td class="text-right mono">$29,355</td>
+                            <td class="text-right mono">46.5%</td>
+                            <td class="text-right mono" style="color: #e74c3c;">-$1,263</td>
+                        </tr>
+                        <tr style="background: #d4edda;">
+                            <td><strong>With 4% Growth</strong></td>
+                            <td>10 people</td>
+                            <td>362</td>
+                            <td class="text-right mono">$29,355</td>
+                            <td class="text-right mono">44.8%</td>
+                            <td class="text-right mono" style="color: #27ae60;">+$0</td>
+                        </tr>
+                        <tr style="background: #d4edda;">
+                            <td><strong>With 10% Growth</strong></td>
+                            <td>10 people</td>
+                            <td>362</td>
+                            <td class="text-right mono">$29,355</td>
+                            <td class="text-right mono">42.3%</td>
+                            <td class="text-right mono" style="color: #27ae60;">+$2,820</td>
+                        </tr>
+                    </tbody>
+                </table>
+                    </tbody>
+                </table>
+                
+                <h3>Quarterly Projection with Growth Initiatives</h3>
+                <div class="metrics-grid">
+                    <div class="metric-card warning">
+                        <div class="metric-label">January (Current Sales)</div>
+                        <div class="metric-value">-$1,263</div>
+                        <div class="metric-detail">Proper staffing buffer</div>
+                    </div>
+                    
+                    <div class="metric-card success">
+                        <div class="metric-label">February (+5% Growth)</div>
+                        <div class="metric-value">+$965</div>
+                        <div class="metric-detail">Catering starts contributing</div>
+                    </div>
+                    
+                    <div class="metric-card success">
+                        <div class="metric-label">March (+10% Growth)</div>
+                        <div class="metric-value">+$2,820</div>
+                        <div class="metric-detail">Marketing & catering mature</div>
+                    </div>
+                    
+                    <div class="metric-card success">
+                        <div class="metric-label">Q1 2025 Net</div>
+                        <div class="metric-value">+$2,522</div>
+                        <div class="metric-detail">After reset investment</div>
+                    </div>
+                </div>
+                
+                <div style="margin: 20px 0; padding: 15px; background: #d1ecf1; border-radius: 8px;">
+                    <strong>Growth Assumptions (Conservative):</strong>
+                    <ul style="margin-top: 10px; line-height: 1.8;">
+                        <li><strong>January:</strong> Current $63,099 sales, small loss due to proper staffing</li>
+                        <li><strong>February:</strong> +5% from catering launch + marketing materials = $66,254 sales</li>
+                        <li><strong>March:</strong> +10% from full catering + beautified space + ongoing marketing = $69,409 sales</li>
+                        <li><strong>Compound Effect:</strong> Reset week investments generate recurring revenue gains</li>
+                    </ul>
+                </div>
+                
+                <h3>Break-Even Analysis</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th class="text-right">Amount</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Break-Even Sales (monthly)</td>
+                            <td class="text-right mono">$65,625</td>
+                            <td>Total operating costs to cover</td>
+                        </tr>
+                        <tr>
+                            <td>Break-Even Sales (weekly)</td>
+                            <td class="text-right mono">$15,149</td>
+                            <td>Need to maintain this average</td>
+                        </tr>
+                        <tr>
+                            <td>Break-Even Sales (daily)</td>
+                            <td class="text-right mono">$2,165</td>
+                            <td>Average per day open</td>
+                        </tr>
+                        <tr>
+                            <td>Current Sales</td>
+                            <td class="text-right mono">$63,099</td>
+                            <td>4-week average</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td>Gap to Break-Even</td>
+                            <td class="text-right mono">$2,526/month</td>
+                            <td><strong>Only 4% growth needed</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3>Sensitivity Analysis: What If Sales Change?</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sales Scenario</th>
+                            <th class="text-right">Monthly Sales</th>
+                            <th class="text-right">Monthly Profit</th>
+                            <th class="text-right">Labor %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Sales drop 5%</td>
+                            <td class="text-right mono">$59,944</td>
+                            <td class="text-right mono" style="color: #e74c3c;">-$3,420</td>
+                            <td class="text-right mono">49.0%</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td><strong>Current Sales</strong></td>
+                            <td class="text-right mono"><strong>$63,099</strong></td>
+                            <td class="text-right mono" style="color: #e74c3c;"><strong>-$1,263</strong></td>
+                            <td class="text-right mono"><strong>46.5%</strong></td>
+                        </tr>
+                        <tr style="background: #d4edda;">
+                            <td>Sales grow 4%</td>
+                            <td class="text-right mono">$65,625</td>
+                            <td class="text-right mono" style="color: #27ae60;">$0</td>
+                            <td class="text-right mono">44.7%</td>
+                        </tr>
+                        <tr>
+                            <td>Sales grow 5%</td>
+                            <td class="text-right mono">$66,254</td>
+                            <td class="text-right mono" style="color: #27ae60;">+$629</td>
+                            <td class="text-right mono">44.3%</td>
+                        </tr>
+                        <tr>
+                            <td>Sales grow 10%</td>
+                            <td class="text-right mono">$69,409</td>
+                            <td class="text-right mono" style="color: #27ae60;">+$2,884</td>
+                            <td class="text-right mono">42.3%</td>
+                        </tr>
+                        <tr>
+                            <td>Sales grow 15%</td>
+                            <td class="text-right mono">$72,564</td>
+                            <td class="text-right mono" style="color: #27ae60;">+$5,139</td>
+                            <td class="text-right mono">40.5%</td>
+                        </tr>
+                        <tr>
+                            <td>Sales grow 20%</td>
+                            <td class="text-right mono">$75,719</td>
+                            <td class="text-right mono" style="color: #27ae60;">+$7,394</td>
+                            <td class="text-right mono">38.8%</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="alert alert-info" style="margin-top: 30px;">
+                    <strong>Key Insight:</strong> With proper staffing buffer at 46.5% labor, you need just 4% sales growth to break even. Reset week initiatives (catering program, professional marketing, beautified space) are projected to deliver $11K-16K/month in additional revenue - far exceeding the 4% needed. Every dollar above break-even drops straight to profit at 68% margin (after COGS).
+                </div>
+            </div>
+        </div>
+        
+        <!-- TIMELINE TAB -->
+        <div id="timeline" class="tab-content">
+            <div class="card">
+                <h2>Implementation Timeline</h2>
+                
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-date">Week of December 5-11</div>
+                        <h4>Preparation Phase Begins</h4>
+                        <ul>
+                            <li>Confirm Tim's start date (January 1)</li>
+                            <li>Finalize Tim's compensation and agreement</li>
+                            <li>Review current staff performance data</li>
+                            <li>Identify 6 keeper line staff based on cross-training ability</li>
+                            <li>Prepare communication plan for staffing changes</li>
+                            <li>Plan public messaging for training week closure</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-date">Week of December 12-18</div>
+                        <h4>Notification & Final Prep</h4>
+                        <ul>
+                            <li>Make offers to 6 keeper employees</li>
+                            <li>Communicate new staffing structure to team</li>
+                            <li>Handle any employee questions/concerns</li>
+                            <li>Announce public closure Dec 21-30 for "intensive training"</li>
+                            <li>Prepare training materials and schedule</li>
+                            <li>Order supplies for training week</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-date">December 19-20</div>
+                        <h4>Final Public Service</h4>
+                        <ul>
+                            <li>Last two days of normal operations</li>
+                            <li>Inventory assessment and ordering for reset</li>
+                            <li>Management transition preparation</li>
+                            <li>Prep team for training week</li>
+                            <li>Social media posts about training closure</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="timeline-item" style="border-color: var(--warning);">
+                        <div class="timeline-date">December 21-30 (10 Days)</div>
+                        <h4>🔧 COMPREHENSIVE RESET WEEK - Closed to Public</h4>
+                        <strong>Total Investment: $8,194</strong>
+                        <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 5px;">
+                            <strong>Philosophy:</strong> Every labor hour generates value. Not just training - building infrastructure for growth.
+                        </div>
+                        
+                        <div style="margin-top: 15px; padding: 15px; background: #fff3cd; border-radius: 8px;">
+                            <strong>Dec 21-22: Foundation & Beautification</strong>
+                            <ul>
+                                <li>Complete deep clean (hood, equipment, floors, FOH)</li>
+                                <li>Paint touch-ups and repairs</li>
+                                <li>Optimize kitchen workflow and layout</li>
+                                <li>Equipment inspection and servicing</li>
+                                <li>POS system cleanup and optimization</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="margin-top: 15px; padding: 15px; background: #d1ecf1; border-radius: 8px;">
+                            <strong>Dec 23-24: Operations & Catering Buildout</strong>
+                            <ul>
+                                <li><strong>Recipe Standardization (Mikey):</strong> Document all recipes, establish prep protocols</li>
+                                <li><strong>Catering Program Launch:</strong> Create menu, pricing, packages, order system</li>
+                                <li>Design catering marketing materials</li>
+                                <li>Identify target businesses and organizations</li>
+                                <li>Practice catering prep and packaging</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                            <strong>Dec 25: Christmas - Closed</strong>
+                        </div>
+                        
+                        <div style="margin-top: 15px; padding: 15px; background: #d1ecf1; border-radius: 8px;">
+                            <strong>Dec 26-27: Marketing & Cross-Training</strong>
+                            <ul>
+                                <li><strong>Marketing Assets:</strong> Photoshoot all menu items, create 30+ social posts</li>
+                                <li>Update website with new photos and information</li>
+                                <li>Design reopening campaign materials</li>
+                                <li>Build email list and first newsletter</li>
+                                <li>Create and print neighborhood flyers</li>
+                                <li><strong>Team Training:</strong> Cross-train everyone on prep/cook/FOH, POS training</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="margin-top: 15px; padding: 15px; background: #d4edda; border-radius: 8px;">
+                            <strong>Dec 28-29: Testing & Optimization</strong>
+                            <ul>
+                                <li>Full mock service with friends/family</li>
+                                <li>Test all systems under load (POS, kitchen, FOH)</li>
+                                <li>Practice catering order fulfillment</li>
+                                <li>Test late-night operations</li>
+                                <li>Identify and fix any issues</li>
+                                <li>Finalize processes and checklists</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="margin-top: 15px; padding: 15px; background: #fff3cd; border-radius: 8px;">
+                            <strong>Dec 30: Launch Preparation</strong>
+                            <ul>
+                                <li>Inventory restock for reopening</li>
+                                <li>Social media marketing blitz</li>
+                                <li>Distribute flyers in neighborhood</li>
+                                <li>Catering outreach follow-ups</li>
+                                <li>Team alignment meeting</li>
+                                <li>New Year's Eve special prep</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="margin-top: 15px; padding: 15px; background: #d4edda; border-radius: 8px;">
+                            <strong>🎯 Value Generated:</strong>
+                            <ul>
+                                <li>✅ Catering program ready to generate $5-10K/month</li>
+                                <li>✅ Professional marketing assets worth $10K+ if outsourced</li>
+                                <li>✅ Beautified restaurant for better reviews and repeat visits</li>
+                                <li>✅ 6 months of social content library created</li>
+                                <li>✅ Fully cross-trained lean team</li>
+                                <li>✅ Standardized operations for consistency</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item" style="border-color: var(--success);">
+                        <div class="timeline-date">December 31 - January 1</div>
+                        <h4>🎉 GRAND REOPENING - "New Year, New Times"</h4>
+                        <ul>
+                            <li>Tim's first day as GM</li>
+                            <li>9-person optimized team</li>
+                            <li>New Year's Eve service (test under fire)</li>
+                            <li>Social media push for reopening</li>
+                            <li>Execute marketing promotions</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-date">January 2-15</div>
+                        <h4>Stabilization Period</h4>
+                        <ul>
+                            <li>Tim settles into GM role</li>
+                            <li>Monitor operations closely</li>
+                            <li>Daily team check-ins</li>
+                            <li>Adjust scheduling as needed</li>
+                            <li>Track all metrics against plan</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-date">January 16-31</div>
+                        <h4>Optimization Phase</h4>
+                        <ul>
+                            <li>Fine-tune operations based on first 2 weeks</li>
+                            <li>Address any staffing gaps</li>
+                            <li>Optimize scheduling for efficiency</li>
+                            <li>Begin planning for growth initiatives</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-date">February - March</div>
+                        <h4>Growth Phase</h4>
+                        <ul>
+                            <li>Implement sales growth strategies</li>
+                            <li>Late-night marketing push</li>
+                            <li>Delivery optimization</li>
+                            <li>Happy hour/promotions</li>
+                            <li>Catering development</li>
+                            <li>Target: 10-20% sales growth</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h3>Key Milestones & Success Metrics</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Milestone</th>
+                            <th>Success Metric</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Dec 15</td>
+                            <td>All staff notified</td>
+                            <td>6 keepers confirmed, new structure communicated</td>
+                        </tr>
+                        <tr>
+                            <td>Dec 20</td>
+                            <td>Last public service</td>
+                            <td>Clean transition, inventory assessed</td>
+                        </tr>
+                        <tr>
+                            <td>Dec 30</td>
+                            <td>Training complete</td>
+                            <td>Team ready, systems tested, restock complete</td>
+                        </tr>
+                        <tr>
+                            <td>Jan 1</td>
+                            <td>Reopening day</td>
+                            <td>Successful service with new team</td>
+                        </tr>
+                        <tr>
+                            <td>Jan 7</td>
+                            <td>First week complete</td>
+                            <td>Sales maintained, labor under 42%, no major issues</td>
+                        </tr>
+                        <tr>
+                            <td>Jan 31</td>
+                            <td>First month close</td>
+                            <td>Profitable operations, team stabilized</td>
+                        </tr>
+                        <tr>
+                            <td>Mar 31</td>
+                            <td>Q1 complete</td>
+                            <td>3 months profitable, 10%+ sales growth</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- COMPARISON TAB -->
+        <div id="comparison" class="tab-content">
+            <div class="card">
+                <h2>Side-by-Side Comparison: Current vs. New Model</h2>
+                
+                <div class="comparison-grid">
+                    <div class="comparison-card current">
+                        <h3 style="color: #e74c3c; margin-bottom: 20px;">❌ Current Operations</h3>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <strong>Monthly P&L:</strong>
+                            <div style="font-size: 2em; color: #e74c3c; font-weight: bold; margin: 10px 0;">-$31,000</div>
+                            <div style="color: #666;">Losing $1,043/day</div>
+                        </div>
+                        
+                        <table style="font-size: 0.9em;">
+                            <tr>
+                                <td><strong>Revenue</strong></td>
+                                <td class="text-right mono">$63,099</td>
+                            </tr>
+                            <tr>
+                                <td>COGS (33%)</td>
+                                <td class="text-right mono">$20,977</td>
+                            </tr>
+                            <tr style="background: #f8d7da;">
+                                <td><strong>Labor (83%)</strong></td>
+                                <td class="text-right mono"><strong>$52,315</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Fixed Costs</td>
+                                <td class="text-right mono">$13,059</td>
+                            </tr>
+                            <tr>
+                                <td>Variable Costs</td>
+                                <td class="text-right mono">$5,048</td>
+                            </tr>
+                            <tr style="background: #f8d7da;">
+                                <td><strong>Net Loss</strong></td>
+                                <td class="text-right mono"><strong>-$31,000</strong></td>
+                            </tr>
+                        </table>
+                        
+                        <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 8px;">
+                            <strong>Staffing:</strong>
+                            <ul style="margin-top: 10px; line-height: 1.8;">
+                                <li>19 employees</li>
+                                <li>~400 weekly hours</li>
+                                <li>83% labor ratio</li>
+                                <li>Unsustainable structure</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="comparison-card new">
+                        <h3 style="color: #27ae60; margin-bottom: 20px;">✅ New Model (Post-Reset)</h3>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <strong>Monthly P&L (Current Sales):</strong>
+                            <div style="font-size: 2em; color: #f39c12; font-weight: bold; margin: 10px 0;">-$1,263</div>
+                            <div style="color: #666;">Need 4% growth for profitability</div>
+                        </div>
+                        
+                        <table style="font-size: 0.9em;">
+                            <tr>
+                                <td><strong>Revenue</strong></td>
+                                <td class="text-right mono">$63,099</td>
+                            </tr>
+                            <tr>
+                                <td>COGS (30%)</td>
+                                <td class="text-right mono">$18,930</td>
+                            </tr>
+                            <tr style="background: #fff3cd;">
+                                <td><strong>Labor (46.5%)</strong></td>
+                                <td class="text-right mono"><strong>$29,355</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Fixed Costs</td>
+                                <td class="text-right mono">$11,029</td>
+                            </tr>
+                            <tr>
+                                <td>Variable Costs</td>
+                                <td class="text-right mono">$5,048</td>
+                            </tr>
+                            <tr style="background: #fff3cd;">
+                                <td><strong>Net Loss</strong></td>
+                                <td class="text-right mono"><strong>-$1,263</strong></td>
+                            </tr>
+                        </table>
+                        
+                        <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 8px;">
+                            <strong>Staffing:</strong>
+                            <ul style="margin-top: 10px; line-height: 1.8;">
+                                <li>10 employees (4 leadership + 6 line)</li>
+                                <li>362 weekly hours</li>
+                                <li>46.5% labor ratio</li>
+                                <li>Proper coverage with buffer</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="margin-top: 15px; padding: 15px; background: #d4edda; border-radius: 8px;">
+                            <strong>With 4% Growth:</strong><br/>
+                            <strong style="font-size: 1.3em; color: #27ae60;">Break Even + Path to Profit</strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>Key Improvements</h3>
+                <div class="metrics-grid">
+                    <div class="metric-card success">
+                        <div class="metric-label">Labor Savings</div>
+                        <div class="metric-value">$22,960</div>
+                        <div class="metric-detail">44% reduction in labor costs</div>
+                    </div>
+                    
+                    <div class="metric-card success">
+                        <div class="metric-label">P&L Improvement</div>
+                        <div class="metric-value">+$29,737</div>
+                        <div class="metric-detail">From -$31K to -$1.3K</div>
+                    </div>
+                    
+                    <div class="metric-card success">
+                        <div class="metric-label">Labor Ratio Drop</div>
+                        <div class="metric-value">36.4 pts</div>
+                        <div class="metric-detail">From 82.9% to 46.5%</div>
+                    </div>
+                    
+                    <div class="metric-card success">
+                        <div class="metric-label">Staff Reduction</div>
+                        <div class="metric-value">-9</div>
+                        <div class="metric-detail">From 19 to 10 employees</div>
+                    </div>
+                </div>
+                
+                <h3>90-Day Financial Comparison</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Period</th>
+                            <th class="text-right">Current Path</th>
+                            <th class="text-right">Reset Path</th>
+                            <th class="text-right">Difference</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>December 2025</strong></td>
+                            <td class="text-right mono" style="color: #e74c3c;">-$31,000</td>
+                            <td class="text-right mono" style="color: #e74c3c;">-$29,054</td>
+                            <td class="text-right mono" style="color: #27ae60;">+$1,946</td>
+                        </tr>
+                        <tr>
+                            <td style="padding-left: 30px; font-size: 0.9em; color: #666;">Dec 1-20 operations</td>
+                            <td class="text-right mono" style="color: #666;">-$20,860</td>
+                            <td class="text-right mono" style="color: #666;">-$20,860</td>
+                            <td class="text-right mono" style="color: #666;">$0</td>
+                        </tr>
+                        <tr>
+                            <td style="padding-left: 30px; font-size: 0.9em; color: #666;">Dec 21-30 (training/ops)</td>
+                            <td class="text-right mono" style="color: #666;">-$10,430</td>
+                            <td class="text-right mono" style="color: #666;">-$8,194</td>
+                            <td class="text-right mono" style="color: #27ae60;">+$2,236</td>
+                        </tr>
+                        <tr>
+                            <td><strong>January 2025</strong></td>
+                            <td class="text-right mono" style="color: #e74c3c;">-$31,000</td>
+                            <td class="text-right mono" style="color: #e74c3c;">-$1,263</td>
+                            <td class="text-right mono" style="color: #27ae60;">+$29,737</td>
+                        </tr>
+                        <tr>
+                            <td><strong>February 2025</strong></td>
+                            <td class="text-right mono" style="color: #e74c3c;">-$31,000</td>
+                            <td class="text-right mono" style="color: #27ae60;">+$965</td>
+                            <td class="text-right mono" style="color: #27ae60;">+$31,965</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td><strong>TOTAL (90 Days)</strong></td>
+                            <td class="text-right mono" style="color: #e74c3c; font-size: 1.2em;"><strong>-$93,000</strong></td>
+                            <td class="text-right mono" style="color: #27ae60; font-size: 1.2em;"><strong>-$26,326</strong></td>
+                            <td class="text-right mono" style="color: #27ae60; font-size: 1.2em;"><strong>+$66,674</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="alert alert-success" style="margin-top: 30px; font-size: 1.1em;">
+                    <strong>Bottom Line:</strong> The reset path saves $66,674 in 90 days even with proper staffing buffer. With just 4% sales growth (easily achieved through reset initiatives), operation becomes cash-flow positive. Continuing current operations burns through $93,000 with no path to profitability.
+                </div>
+                
+                <h3>Risk Assessment</h3>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+                    <div>
+                        <h4 style="color: #e74c3c; margin-bottom: 15px;">Current Path Risks</h4>
+                        <ul style="line-height: 1.8;">
+                            <li>Burning $1,043/day indefinitely</li>
+                            <li>No clear path to profitability</li>
+                            <li>Owner conflict-avoidant → no decisions</li>
+                            <li>Staff walkout risk if forced cuts</li>
+                            <li>Morale degradation as losses mount</li>
+                            <li>Eventually forced to close anyway</li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 style="color: #27ae60; margin-bottom: 15px;">Reset Path Risks</h4>
+                        <ul style="line-height: 1.8;">
+                            <li>Sales disruption during closure (minimal - only 10 days)</li>
+                            <li>Losing good staff in cuts (mitigated by keeping 5 best)</li>
+                            <li>Tim execution risk (experienced from Pizzicato)</li>
+                            <li>Tight staffing requires high reliability</li>
+                            <li>No margin for error (but immediately profitable)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h3>Critical Success Factors</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Factor</th>
+                            <th>Current Model</th>
+                            <th>New Model</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Management Capability</strong></td>
+                            <td style="color: #f39c12;">Restructuring needed</td>
+                            <td style="color: #27ae60;">Tim brings Pizzicato experience</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Labor Efficiency</strong></td>
+                            <td style="color: #e74c3c;">83% ratio, unsustainable</td>
+                            <td style="color: #27ae60;">41% ratio, industry-acceptable</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Team Quality</strong></td>
+                            <td style="color: #f39c12;">Mixed - 19 people, variable performance</td>
+                            <td style="color: #27ae60;">Curated - 10 best cross-trained people</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Financial Runway</strong></td>
+                            <td style="color: #e74c3c;">Losing $31K/month, limited time</td>
+                            <td style="color: #27ae60;">Profitable immediately, sustainable</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Growth Potential</strong></td>
+                            <td style="color: #e74c3c;">Every dollar eaten by labor costs</td>
+                            <td style="color: #27ae60;">Lean base, growth = profit</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function switchTab(tabName) {
+            // Hide all tab contents
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+            
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => button.classList.remove('active'));
+            
+            // Show selected tab and highlight button
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
