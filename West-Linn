@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fast Times West Linn - Competitive Analysis Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f7fafc;
+            border-bottom: 3px solid #e2e8f0;
+            overflow-x: auto;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 20px 30px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s;
+            border-bottom: 4px solid transparent;
+            white-space: nowrap;
+        }
+
+        .tab:hover {
+            background: #edf2f7;
+        }
+
+        .tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .executive-summary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .executive-summary h2 {
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .executive-summary p {
+            font-size: 1.1em;
+            line-height: 1.8;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            color: #2d3748;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .section h3 {
+            color: #4a5568;
+            font-size: 1.4em;
+            margin: 25px 0 15px 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 5px solid #667eea;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h4 {
+            color: #2d3748;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        .card p, .card ul {
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        .card ul {
+            list-style-position: inside;
+            margin-top: 10px;
+        }
+
+        .card li {
+            margin-bottom: 8px;
+        }
+
+        .highlight-box {
+            background: #fef3c7;
+            border-left: 5px solid #f59e0b;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .opportunity-box {
+            background: #d1fae5;
+            border-left: 5px solid #10b981;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .threat-box {
+            background: #fee2e2;
+            border-left: 5px solid #ef4444;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        tbody tr:hover {
+            background: #f7fafc;
+        }
+
+        .status-open {
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .status-closed {
+            color: #ef4444;
+            font-weight: 600;
+        }
+
+        .map-container {
+            background: #f7fafc;
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .map-placeholder {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px;
+            border-radius: 12px;
+            font-size: 1.2em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+
+        .positioning-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .positioning-card {
+            background: #f7fafc;
+            padding: 30px;
+            border-radius: 12px;
+            border-top: 5px solid #667eea;
+        }
+
+        .positioning-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .positioning-card ul {
+            list-style: none;
+        }
+
+        .positioning-card li {
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .positioning-card li:last-child {
+            border-bottom: none;
+        }
+
+        .competitive-advantage {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+
+        .competitive-advantage h3 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        .competitive-advantage ul {
+            font-size: 1.1em;
+            line-height: 2;
+        }
+
+        @media (max-width: 768px) {
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .grid, .positioning-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍕 Fast Times PDX - West Linn Market Analysis</h1>
+            <p>Comprehensive Competitive Intelligence for Second Location | December 2025</p>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('overview')">📊 Executive Overview</div>
+            <div class="tab" onclick="showTab('pizza')">🍕 Pizza Competition</div>
+            <div class="tab" onclick="showTab('softserve')">🍦 Soft Serve Competition</div>
+            <div class="tab" onclick="showTab('pricing')">💰 Pricing Benchmarks</div>
+            <div class="tab" onclick="showTab('positioning')">🎯 Fast Times Positioning</div>
+        </div>
+
+        <div class="content">
+            <!-- Executive Overview Tab -->
+            <div id="overview" class="tab-content active">
+                <div class="executive-summary">
+                    <h2>Executive Summary</h2>
+                    <p>West Linn presents a <strong>high-opportunity, low-competition</strong> market for Fast Times' unique pizza and soft serve concept. The affluent, family-oriented community (median household income: $138,526) currently lacks any late-night dining options and has minimal plant-based offerings. With only 6 pizza establishments and 1 dedicated ice cream parlor serving 27,000+ residents, Fast Times can capture significant market share through its differentiated positioning.</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">27,065</div>
+                        <div class="stat-label">Population</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">$138.5K</div>
+                        <div class="stat-label">Median Income</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">6</div>
+                        <div class="stat-label">Pizza Competitors</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">0</div>
+                        <div class="stat-label">Late-Night Options</div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Market Demographics</h2>
+                    <div class="grid">
+                        <div class="card">
+                            <h4>👨‍👩‍👧‍👦 Family-Oriented</h4>
+                            <ul>
+                                <li>Median age: 43 years</li>
+                                <li>76.8% family households</li>
+                                <li>High homeownership: 78%</li>
+                                <li>Strong school district</li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h4>💼 Affluent & Educated</h4>
+                            <ul>
+                                <li>Median income: $138,526</li>
+                                <li>36.4% hold bachelor's degree</li>
+                                <li>22.3% advanced degrees</li>
+                                <li>Low poverty rate: 5.2%</li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h4>🏡 Suburban Character</h4>
+                            <ul>
+                                <li>7.39 square miles</li>
+                                <li>Located 15 miles south of Portland</li>
+                                <li>"City of hills, trees, and rivers"</li>
+                                <li>Median home value: $406,700</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="opportunity-box">
+                    <h3>🎯 Critical Market Gaps (Opportunities)</h3>
+                    <ul>
+                        <li><strong>ZERO late-night food options</strong> - All restaurants close by 9-11 PM (Fast Times 2-4 AM hours = monopoly)</li>
+                        <li><strong>Limited plant-based offerings</strong> - Only Papa Murphy's offers dairy-free cheese; no dedicated plant-based pizza</li>
+                        <li><strong>No combined pizza + dessert concept</strong> - Customers currently visit separate establishments</li>
+                        <li><strong>Minimal worker-friendly establishments</strong> - Opportunity to differentiate on values</li>
+                        <li><strong>Underserved affluent demographic</strong> - High disposable income, limited quality casual dining</li>
+                    </ul>
+                </div>
+
+                <div class="threat-box">
+                    <h3>⚠️ Competitive Threats</h3>
+                    <ul>
+                        <li>Elden's Restaurant & Bar - New (2024), gaining traction, family-friendly, craft cocktails, strong reviews</li>
+                        <li>Dairy Hill Ice Cream - Established local favorite, multiple locations, community involvement</li>
+                        <li>Papa Murphy's - Take-n-bake model, accepts SNAP/EBT, plant-based options, convenient</li>
+                        <li>Market maturity - Residents have established dining habits and loyalties</li>
+                    </ul>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>💡 Strategic Recommendation</h3>
+                    <p><strong>Fast Times should proceed with West Linn expansion.</strong> The market demographics align perfectly with the brand (affluent families, educated consumers who value sustainability), and critical gaps exist in late-night service and plant-based options. The lack of any 24-hour or late-night competition creates a defensive moat. Success factors: emphasize plant-based menu leadership, capture late-night market entirely, build community presence through local partnerships, and position as the family gathering spot that serves everyone from 3 PM school crowds to midnight shift workers.</p>
+                </div>
+            </div>
+
+            <!-- Pizza Competition Tab -->
+            <div id="pizza" class="tab-content">
+                <div class="section">
+                    <h2>Pizza Competitive Landscape</h2>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Establishment</th>
+                                <th>Location</th>
+                                <th>Hours</th>
+                                <th>Style</th>
+                                <th>Strengths</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Elden's Restaurant & Bar</strong></td>
+                                <td>19121 Willamette Dr</td>
+                                <td>11 AM - 10/11 PM</td>
+                                <td>Full-service restaurant/bar</td>
+                                <td>New (2024), house-made everything, craft cocktails, family + adult sections, 20 taps, event space</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Spectator Pizza & Pub</strong></td>
+                                <td>21700 Salamo Rd</td>
+                                <td>Standard hours</td>
+                                <td>Family-owned pub</td>
+                                <td>Local ownership, 13 beers on tap, video games, sports viewing, community events</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Bellagio's Pizza</strong></td>
+                                <td>1880 Willamette Falls Dr</td>
+                                <td>11 AM - 8/9 PM</td>
+                                <td>Traditional Italian</td>
+                                <td>Pizza by slice (11 AM-2 PM), delivery, multiple sauce options, established reputation</td>
+                            </tr>
+                            <tr>
+                                <td><strong>J. Willy's Public House</strong></td>
+                                <td>Multiple locations</td>
+                                <td>10 AM - Late (NFL season)</td>
+                                <td>Sports bar/pub</td>
+                                <td>Artisan pizza, happy hour 3-6 PM, MLB/NFL packages, family dining room + 21+ bar</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Papa Murphy's</strong></td>
+                                <td>2000 8th Avenue</td>
+                                <td>11 AM - 8/9 PM</td>
+                                <td>Take-n-bake</td>
+                                <td>SNAP/EBT accepted, dairy-free cheese, gluten-free crust, convenient, national brand</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Round Table Pizza</strong></td>
+                                <td>19121 Willamette Dr</td>
+                                <td>11 AM - Standard</td>
+                                <td>Chain pizza</td>
+                                <td>Lunch buffet M-F, established brand, spacious dining, consistent quality</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Competitive Analysis by Segment</h3>
+                    
+                    <div class="grid">
+                        <div class="card">
+                            <h4>🏆 Market Leaders</h4>
+                            <p><strong>Elden's:</strong> Newest entry (2024), generating buzz, full-service experience, capturing family + adult demographics</p>
+                            <p><strong>Bellagio's:</strong> Established favorite, known for quality crust and generous toppings, reliable delivery</p>
+                        </div>
+                        <div class="card">
+                            <h4>💪 Niche Players</h4>
+                            <p><strong>Papa Murphy's:</strong> Convenience + price, serves budget-conscious families, SNAP/EBT access</p>
+                            <p><strong>Spectator Pizza:</strong> Community hub, local ownership, casual sports viewing</p>
+                        </div>
+                        <div class="card">
+                            <h4>🎯 Key Differentiators</h4>
+                            <ul>
+                                <li>Plant-based options: LIMITED (only Papa Murphy's dairy-free)</li>
+                                <li>Late-night: NONE past 11 PM</li>
+                                <li>Pizza + dessert combo: NONE</li>
+                                <li>Worker-friendly values: NOT emphasized</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="competitive-advantage">
+                    <h3>Fast Times Pizza Advantages in West Linn</h3>
+                    <ul>
+                        <li>✅ <strong>Only restaurant open past midnight</strong> - Zero competition for late-night diners, bar crowds, shift workers</li>
+                        <li>✅ <strong>67% plant-based menu</strong> - Significant differentiation vs. limited plant-based options in market</li>
+                        <li>✅ <strong>Integrated dessert offering</strong> - One-stop destination (pizza + soft serve) vs. multi-stop dining</li>
+                        <li>✅ <strong>"Forward to the Past" ethos</strong> - Values-driven positioning appeals to educated, progressive West Linn demographic</li>
+                        <li>✅ <strong>Portland brand cachet</strong> - Can leverage successful Burnside location reputation</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Soft Serve Competition Tab -->
+            <div id="softserve" class="tab-content">
+                <div class="section">
+                    <h2>Soft Serve & Ice Cream Competitive Landscape</h2>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Establishment</th>
+                                <th>Location</th>
+                                <th>Hours</th>
+                                <th>Offerings</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Dairy Hill Ice Cream</strong></td>
+                                <td>19143 Willamette Dr</td>
+                                <td>Seasonal hours</td>
+                                <td>Umpqua ice cream, soft serve, shakes, floats, sundaes, custom cakes</td>
+                                <td>LOCAL FAVORITE - Multiple locations, community events, vegan options, established brand</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Oh My Gelati (Oregon City)</strong></td>
+                                <td>Nearby</td>
+                                <td>Standard</td>
+                                <td>Frozen custard + Italian ice</td>
+                                <td>Woman-owned, unique gelati concept, highly rated</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Mike's Drive-In (Oregon City)</strong></td>
+                                <td>Nearby</td>
+                                <td>Standard</td>
+                                <td>Fresh berry shakes, soft serve</td>
+                                <td>Known for marionberry/huckleberry, fresh handpicked berries, premium pricing</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Baskin-Robbins</strong></td>
+                                <td>Greater area</td>
+                                <td>Standard</td>
+                                <td>National chain ice cream</td>
+                                <td>Brand recognition, consistent quality</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Menchie's Frozen Yogurt</strong></td>
+                                <td>Greater area</td>
+                                <td>Standard</td>
+                                <td>Self-serve froyo</td>
+                                <td>Build-your-own model, health-conscious positioning</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="highlight-box">
+                        <h3>⚠️ Dairy Hill = Primary Soft Serve Threat</h3>
+                        <p><strong>Dairy Hill Ice Cream is the dominant ice cream establishment in West Linn.</strong> Locally-owned with multiple Portland-area locations, strong community presence (fundraising, local events), offers vegan options, and carries trusted Umpqua brand. They are an established destination for families and have built significant brand loyalty.</p>
+                        <p><strong>Mitigation Strategy:</strong> Fast Times should NOT attempt to compete head-to-head on ice cream quality alone. Instead, emphasize the COMBINED offering (pizza + soft serve = one stop), late-night availability (Dairy Hill closes early), and INTEGRATE soft serve into the full dining experience rather than positioning as standalone dessert destination.</p>
+                    </div>
+
+                    <h3>Market Observations</h3>
+                    
+                    <div class="grid">
+                        <div class="card">
+                            <h4>🍦 Limited Late-Night Dessert</h4>
+                            <p>No ice cream establishments open past evening hours. Fast Times' 2-4 AM service would monopolize late-night dessert market for bar crowds, families after movies/events, and shift workers.</p>
+                        </div>
+                        <div class="card">
+                            <h4>🌱 Plant-Based Gap</h4>
+                            <p>While Dairy Hill offers "vegan options," there's limited information on plant-based soft serve specifically. Fast Times can lead with clearly marketed plant-based soft serve options.</p>
+                        </div>
+                        <div class="card">
+                            <h4>💡 Combo Opportunity</h4>
+                            <p>No establishments offer pizza + soft serve in one location. Customers currently visit Elden's/Bellagio's for dinner, then Dairy Hill for dessert = two stops, two transactions. Fast Times captures both with convenience advantage.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pricing Benchmarks Tab -->
+            <div id="pricing" class="tab-content">
+                <div class="section">
+                    <h2>Pricing Intelligence & Benchmarks</h2>
+
+                    <h3>Pizza Pricing (Based on Available Data)</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Competitor</th>
+                                <th>Size/Item</th>
+                                <th>Price Range</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Papa Murphy's</strong></td>
+                                <td>Large Pizza</td>
+                                <td>$13.99+</td>
+                                <td>Promotional pricing, stuffed crust starts at $13.99, specialty pizzas higher, take-n-bake model = lower price point</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Papa Murphy's</strong></td>
+                                <td>Featured Promo</td>
+                                <td>$9.99</td>
+                                <td>Limited time pepperoni + hot honey pizza</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Papa Murphy's</strong></td>
+                                <td>Sides</td>
+                                <td>$6.99</td>
+                                <td>2+ items for $6.99 each (garlic knots, cookie dough, salads)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Bellagio's</strong></td>
+                                <td>Lunch Special</td>
+                                <td>~$8-10</td>
+                                <td>2 large slices + drink (11 AM-2 PM), described as "very reasonable" pricing</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Bellagio's</strong></td>
+                                <td>Slice</td>
+                                <td>Est. $3-5</td>
+                                <td>Available 11 AM-2 PM daily</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Elden's</strong></td>
+                                <td>16" Pizza</td>
+                                <td>Mid-range</td>
+                                <td>Described as "huge," house-made dough, premium ingredients suggest $18-25 range</td>
+                            </tr>
+                            <tr>
+                                <td><strong>All Competitors</strong></td>
+                                <td>General</td>
+                                <td>$ (Moderate)</td>
+                                <td>TripAdvisor/Yelp mark most as "$" (budget-friendly to moderate), not "$$" or "$$$"</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Ice Cream / Soft Serve Pricing</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Competitor</th>
+                                <th>Item</th>
+                                <th>Price</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Mike's Drive-In</strong></td>
+                                <td>Shakes</td>
+                                <td>Premium ($6+)</td>
+                                <td>"A little spendy for fast food" but justified by fresh handpicked berries</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Dairy Hill</strong></td>
+                                <td>Various</td>
+                                <td>Mid-range</td>
+                                <td>Described as "reasonable price points" for quality, community-focused pricing</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Regional Standard</strong></td>
+                                <td>Scoop</td>
+                                <td>$4-6</td>
+                                <td>Based on market commentary about $6/scoop being "silly" = suggests $4-5 is expected</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Soft Serve Cones</strong></td>
+                                <td>Cone</td>
+                                <td>$1.49-3.49</td>
+                                <td>"$1.49 for an ice cream cone" noted as exceptional value</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="opportunity-box">
+                        <h3>💰 Fast Times Pricing Strategy Recommendations</h3>
+                        <ul>
+                            <li><strong>Pizza Pricing: $16-24 per large</strong> - Position between Papa Murphy's ($14) and premium Elden's (~$22+). Justify premium vs. take-n-bake through plant-based differentiation, late-night convenience, and quality ingredients.</li>
+                            <li><strong>Pizza by Slice: $4-6</strong> - Competitive with Bellagio's, enables sampling and appeals to solo diners/late-night crowds.</li>
+                            <li><strong>Soft Serve: $3-5 per serving</strong> - Align with regional expectations, avoid appearing overpriced vs. Dairy Hill. Combo meals (pizza + soft serve) create value perception.</li>
+                            <li><strong>Combo Specials: Pizza + Soft Serve bundles</strong> - Create $22-28 family meal deals that beat two-stop dining (e.g., $20 pizza + $5 soft serve each = $30 vs. $26 combo).</li>
+                            <li><strong>Late-Night Premium: Consider 10-15% upcharge midnight-4 AM</strong> - No competition justifies modest premium for convenience (common practice in 24-hour establishments).</li>
+                        </ul>
+                    </div>
+
+                    <div class="highlight-box">
+                        <h3>📊 Pricing Positioning Analysis</h3>
+                        <p><strong>West Linn Market Price Sensitivity: Moderate-Low</strong></p>
+                        <ul>
+                            <li>Median household income $138,526 = high disposable income</li>
+                            <li>Low poverty rate (5.2%) = price is not primary barrier</li>
+                            <li>Quality and convenience valued over bargains</li>
+                            <li>Residents willing to pay premium for differentiated offerings</li>
+                        </ul>
+                        <p><strong>Recommended Position:</strong> Premium-moderate pricing that signals quality without alienating families. Plant-based positioning and late-night monopoly justify 15-25% premium vs. Papa Murphy's baseline.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Positioning Tab -->
+            <div id="positioning" class="tab-content">
+                <div class="section">
+                    <h2>Fast Times Brand Positioning in West Linn</h2>
+
+                    <div class="competitive-advantage">
+                        <h3>🎯 Core Positioning Statement</h3>
+                        <p style="font-size: 1.2em; line-height: 1.8;"><strong>Fast Times PDX is West Linn's ONLY late-night gathering spot offering premium plant-based pizza and soft serve from 3 PM to 4 AM, serving everyone from afterschool families to midnight shift workers with progressive values and exceptional quality.</strong></p>
+                    </div>
+
+                    <h3>Differentiation Matrix</h3>
+                    
+                    <div class="positioning-grid">
+                        <div class="positioning-card">
+                            <h3>🌟 Unique Selling Propositions</h3>
+                            <ul>
+                                <li><strong>Late-Night Monopoly:</strong> Only option midnight-4 AM (zero competition)</li>
+                                <li><strong>67% Plant-Based Menu:</strong> Market leader in plant-based pizza options</li>
+                                <li><strong>Pizza + Soft Serve:</strong> Only combined concept (one-stop convenience)</li>
+                                <li><strong>Worker-Friendly Ethos:</strong> "Forward to the Past" values resonate with educated, progressive demographic</li>
+                                <li><strong>Portland Cachet:</strong> Successful Burnside location = proven concept + brand awareness</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="positioning-card">
+                            <h3>🎪 Target Customer Segments</h3>
+                            <ul>
+                                <li><strong>Families (3 PM-9 PM):</strong> Afterschool crowds, weekend dinners, kid-friendly atmosphere</li>
+                                <li><strong>Date Night Couples (6 PM-11 PM):</strong> Casual dining with dessert included</li>
+                                <li><strong>Bar Crowd (11 PM-2 AM):</strong> Post-drinking food, only option in market</li>
+                                <li><strong>Shift Workers (12 AM-4 AM):</strong> Healthcare, service industry, logistics workers</li>
+                                <li><strong>Plant-Based Consumers:</strong> Vegans, vegetarians, flexitarians seeking quality options</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h3>Competitive Positioning Map</h3>
+                    
+                    <div class="grid">
+                        <div class="card">
+                            <h4>vs. Elden's (Full-Service)</h4>
+                            <p><strong>Their Strength:</strong> Full bar, craft cocktails, event space, upscale atmosphere</p>
+                            <p><strong>Our Counter:</strong> Later hours, plant-based focus, soft serve integration, faster service, lower price point, family-friendlier</p>
+                        </div>
+                        
+                        <div class="card">
+                            <h4>vs. Papa Murphy's (Convenience)</h4>
+                            <p><strong>Their Strength:</strong> Take-n-bake model, SNAP/EBT, lowest price point</p>
+                            <p><strong>Our Counter:</strong> Ready-to-eat (no cooking), late-night availability, superior plant-based options, integrated dessert, dine-in experience</p>
+                        </div>
+                        
+                        <div class="card">
+                            <h4>vs. Dairy Hill (Ice Cream)</h4>
+                            <p><strong>Their Strength:</strong> Established favorite, multiple locations, community presence, Umpqua brand</p>
+                            <p><strong>Our Counter:</strong> Combined meal + dessert (don't compete directly), late-night availability, savory + sweet in one stop, plant-based positioning</p>
+                        </div>
+                        
+                        <div class="card">
+                            <h4>vs. Sports Pubs (J. Willy's/Spectator)</h4>
+                            <p><strong>Their Strength:</strong> Sports viewing, beer selection, community gathering spots</p>
+                            <p><strong>Our Counter:</strong> Much later hours, plant-based options, family-friendly (not just 21+), dessert offering, progressive values vs. traditional pub culture</p>
+                        </div>
+                    </div>
+
+                    <h3>Marketing & Community Strategy</h3>
+                    
+                    <div class="opportunity-box">
+                        <h3>🚀 Launch Strategy Recommendations</h3>
+                        <ul>
+                            <li><strong>Emphasize "ONLY Late-Night Option" heavily</strong> - This is the killer app; make it impossible to miss in all marketing</li>
+                            <li><strong>Partner with West Linn-Wilsonville School District</strong> - Afterschool program partnerships, sports team fundraisers, student discount programs</li>
+                            <li><strong>Target healthcare workers at Willamette Falls Hospital</strong> - Shift worker discounts, catering for staff, late-night positioning</li>
+                            <li><strong>Community events presence</strong> - Music in the Park, Street Dance, farmer's market (already proven effective in Portland)</li>
+                            <li><strong>Plant-based leadership messaging</strong> - Position as THE plant-based pizza destination, collaborate with vegan/vegetarian groups</li>
+                            <li><strong>Local business partnerships</strong> - Replicate successful Portland model with local breweries, coffee shops, businesses</li>
+                            <li><strong>Leverage Portland success story</strong> - "From Burnside to West Linn" messaging, bring proven quality/concept</li>
+                        </ul>
+                    </div>
+
+                    <h3>Brand Attributes Alignment with West Linn</h3>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Fast Times Value</th>
+                                <th>West Linn Demographic Match</th>
+                                <th>Competitive Advantage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Plant-Based Focus (67% menu)</td>
+                                <td>Educated population (59% bachelor's+), health-conscious, progressive values</td>
+                                <td>No competitor emphasizes plant-based to this degree</td>
+                            </tr>
+                            <tr>
+                                <td>Worker-Friendly Ethos</td>
+                                <td>High education = social consciousness, values-driven consumers</td>
+                                <td>Differentiates from traditional pizza chains</td>
+                            </tr>
+                            <tr>
+                                <td>Community Partnerships</td>
+                                <td>Tight-knit suburban community, strong local identity</td>
+                                <td>Builds loyalty faster than chain competitors</td>
+                            </tr>
+                            <tr>
+                                <td>Late-Night Service</td>
+                                <td>Portland commuters, healthcare workers, growing service economy</td>
+                                <td>Zero direct competition after 11 PM</td>
+                            </tr>
+                            <tr>
+                                <td>Family-Friendly Atmosphere</td>
+                                <td>76.8% family households, strong school system</td>
+                                <td>Positions alongside Elden's vs. adult-focused pubs</td>
+                            </tr>
+                            <tr>
+                                <td>Premium-Moderate Pricing</td>
+                                <td>$138K median income = low price sensitivity</td>
+                                <td>Can command premium vs. Papa Murphy's</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="threat-box">
+                        <h3>⚠️ Positioning Risks & Mitigation</h3>
+                        <ul>
+                            <li><strong>Risk:</strong> Portland brand doesn't translate to suburbs | <strong>Mitigation:</strong> Emphasize "local" West Linn presence, hire locally, community integration</li>
+                            <li><strong>Risk:</strong> Late-night concept seen as attracting "wrong crowd" | <strong>Mitigation:</strong> Lead with family hours, professional security, emphasize shift worker service</li>
+                            <li><strong>Risk:</strong> Plant-based = limited menu assumption | <strong>Mitigation:</strong> Prominently display traditional options exist alongside plant-based</li>
+                            <li><strong>Risk:</strong> Cannibalization of Burnside location | <strong>Mitigation:</strong> 15 miles apart, different demographics, West Linn is drive-to destination vs. walkable Burnside</li>
+                            <li><strong>Risk:</strong> Premium pricing alienates families | <strong>Mitigation:</strong> Value meal deals, kids meals, loyalty program, emphasize quality justifies price</li>
+                        </ul>
+                    </div>
+
+                    <div class="highlight-box">
+                        <h3>📈 Success Metrics & KPIs</h3>
+                        <p><strong>Monitor these metrics to validate positioning strategy:</strong></p>
+                        <ul>
+                            <li><strong>Late-night revenue mix:</strong> Target 25%+ of weekly sales from midnight-4 AM within 6 months (matching Portland)</li>
+                            <li><strong>Plant-based penetration:</strong> Track % of orders including plant-based items (target: 40%+)</li>
+                            <li><strong>Average ticket with soft serve:</strong> Measure combo ordering vs. pizza-only (target: 60%+ attach rate)</li>
+                            <li><strong>Customer acquisition cost:</strong> Compare to Portland location (expect higher initially due to market education)</li>
+                            <li><strong>Repeat customer rate:</strong> Target 35%+ within 90 days (builds loyalty moat vs. new competitors)</li>
+                            <li><strong>Community engagement:</strong> Track partnership activations, local events, school/business collaborations</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents
+            const contents = document.getElementsByClassName('tab-content');
+            for (let content of contents) {
+                content.classList.remove('active');
+            }
+            
+            // Remove active class from all tabs
+            const tabs = document.getElementsByClassName('tab');
+            for (let tab of tabs) {
+                tab.classList.remove('active');
+            }
+            
+            // Show selected tab content and mark tab as active
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
